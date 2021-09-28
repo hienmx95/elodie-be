@@ -16,7 +16,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:3.1
 
 EXPOSE 8080
 WORKDIR /app
-RUN apt-get update && apt-get install -y net-tools curl iputils-ping telnetd telnet nano vim libc6-dev libgdiplus dnsutils
+# RUN apt-get update && apt-get install -y net-tools curl iputils-ping telnetd telnet nano vim libc6-dev libgdiplus dnsutils
 
 COPY --from=publish /app/publish .
 RUN chmod -R g+w /app
