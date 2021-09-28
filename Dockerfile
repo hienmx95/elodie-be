@@ -3,7 +3,7 @@
 #  FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 # WORKDIR /app
 
- FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+ FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["ELODIE.csproj", "./"]
 RUN dotnet restore "ELODIE.csproj"
@@ -14,7 +14,7 @@ RUN dotnet build "ELODIE.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "ELODIE.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
+FROM mcr.microsoft.com/dotnet/aspnet:3.1
 
 EXPOSE 8080
 WORKDIR /app
