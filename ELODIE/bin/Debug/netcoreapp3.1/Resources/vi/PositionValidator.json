@@ -1,0 +1,19 @@
+﻿{
+  "Position": {
+    "Id": {
+      "IdNotExisted": "Chức vị không tồn tại",
+      "PositionInUsed": "Chức vụ đã được sử dụng"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên chức vụ",
+      "NameOverLength": "Tên chức vụ quá dài",
+      "NameExisted": "Tên chức vụ đã tồn tại"
+    },
+    "Code": {
+      "CodeExisted": "Mã chức vụ đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã chức vụ",
+      "CodeOverLength": "Mã chức vụ quá dài",
+      "CodeHasSpecialCharacter": "Mã chức vụ chứa không thể chứa khoảng trắng hoặc kí tự Tiếng Việt"
+    }
+  }
+}

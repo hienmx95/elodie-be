@@ -1,0 +1,61 @@
+﻿{
+  "Supplier": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại",
+      "SupplierInUsed": "Nhà cung cấp đã được sử dụng"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên nhà cung cấp",
+      "NameOverLength": "Tên nhà cung cấp quá dài",
+      "NameExisted": "Tên nhà cung cấp đã tồn tại"
+    },
+    "Code": {
+      "CodeExisted": "Mã nhà cung cấp đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã nhà cung cấp",
+      "CodeOverLength": "Mã nhà cung cấp quá dài",
+      "CodeHasSpecialCharacter": "Mã nhà cung cấp chứa kí tự đặc biệt"
+    },
+    "TaxCode": {
+      "TaxCodeExisted": "Mã số thuế của nhà cung cấp đã tồn tại",
+      "TaxCodeEmpty": "Chưa nhập mã số thuế của nhà cung cấp",
+      "TaxCodeOverLength": "Mã số thuế của nhà cung cấp quá dài",
+      "TaxCodeHasSpecialCharacter": "Mã số thuế của nhà cung cấp chứa kí tự đặc biệt"
+    },
+    "Status": {
+      "StatusNotExisted": "Trạng thái không tồn tại"
+    },
+    "District": {
+      "DistrictNotExisted": "Quận/ Huyện không tồn tại"
+    },
+    "Nation": {
+      "NationNotExisted": "Quốc gia không tồn tại"
+    },
+    "Province": {
+      "ProvinceNotExisted": "Tỉnh/Thành phố không tồn tại"
+    },
+    "Ward": {
+      "WardNotExisted": "Xã không tồn tại"
+    },
+    "PersonInCharge": {
+      "PersonInChargeNotExisted": "Nhân viên phụ trách chưa tồn tại"
+    },
+    "SupplierContactors": {
+      "ContactorEmpty": "Chưa nhập liên hệ"
+    },
+    "SupplierContactor": {
+      "Name": {
+        "NameEmpty": "Chưa điền tên của người liên hệ",
+        "NameOverLength": "Tên của người liên hệ quá dài"
+      },
+      "Email": {
+        "EmailEmpty": "Chưa điền email của người liên hệ",
+        "EmailOverLength": "Email của người liên hệ quá dài",
+        "EmailWrongFormat": "Email không đúng định dạng"
+      },
+      "Phone": {
+        "PhoneEmpty": "Chưa điền số điện thoại của người liên hệ",
+        "PhoneOverLength": "Số điện thoại của người liên hệ quá dài"
+      }
+    }
+  }
+}

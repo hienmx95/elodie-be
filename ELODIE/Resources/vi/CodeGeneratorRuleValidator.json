@@ -1,0 +1,26 @@
+﻿{
+  "CodeGeneratorRule": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại",
+      "CodeRuleExisted": "Quy tắc này đã tồn tại, vui lòng thay đổi cấu trúc"
+    },
+    "EntityType": {
+      "EntityTypeEmpty": "Chưa chọn đối tượng áp dụng",
+      "EntityTypeNotExisted": "Đối tượng áp dụng không tồn tại",
+      "EntityTypeInUsed": "Đối tượng đã được áp dụng"
+    },
+    "EntityComponent": {
+      "EntityComponentEmpty": "Chưa chọn thành phần sinh mã",
+      "EntityComponentNotExisted": "Thành phần sinh mã không tồn tại"
+    },
+    "CodeGeneratorRuleEntityComponentMapping": {
+      "Sequence": {
+        "SequenceInvalid": "Thứ tự thành phần không hợp lệ",
+        "SequenceDuplicated": "Thứ tự thành phần trùng nhau"
+      }
+    },
+    "Status": {
+      "StatusNotExisted": "Trạng thái không tồn tại"
+    }
+  }
+}

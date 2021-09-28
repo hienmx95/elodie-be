@@ -1,0 +1,20 @@
+﻿{
+  "Nation": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại",
+      "NationInUsed": "Quốc gia đã được sử dụng"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên cho Quốc gia",
+      "NameOverLength": "Tên Quốc gia quá dài",
+      "NameExisted": "Tên Quốc gia đã tồn tại"
+    },
+    "Code": {
+      "CodeExisted": "Mã Quốc gia đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã cho Quốc gia",
+      "CodeOverLength": "Mã Quốc gia quá dài",
+      "CodeHasSpecialCharacter": "Mã Quốc gia không thể chứa khoảng trắng hoặc kí tự đặc biệt"
+    }
+
+  }
+}

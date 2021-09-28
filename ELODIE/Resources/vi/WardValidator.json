@@ -1,0 +1,18 @@
+﻿{
+  "Ward": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại",
+      "WardInUsed": "Xã phường đã được sử dụng"
+    },
+    "Code": {
+      "CodeExisted": "Mã xã/phường đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã xã/phường",
+      "CodeOverLength": "Mã xã/phường quá dài",
+      "CodeHasSpecialCharacter": "Mã xã/phường không thể chứa khoảng trắng hoặc kí tự Tiếng Việt"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên xã/phường",
+      "NameOverLength": "Tên xã/phường quá dài"
+    }
+  }
+}

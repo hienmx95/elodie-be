@@ -1,0 +1,33 @@
+﻿{
+  "Organization": {
+    "Id": {
+      "IdNotExisted": "Đơn vị quản lý không tồn tại"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên cho đơn vị quản lý",
+      "NameOverLength": "Tên đơn vị quản lý quá dài",
+      "NameExisted": "Tên đơn vị quản lý đã tồn tại"
+    },
+    "Code": {
+      "CodeExisted": "Mã đơn vị quản lý đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã cho đơn vị quản lý",
+      "CodeOverLength": "Mã đơn vị quản lý quá dài",
+      "CodeHasSpecialCharacter": "Mã đơn vị quản lý không thể chứa khoảng trắng hoặc kí tự Tiếng Việt"
+    },
+    "Parent": {
+      "Code": {
+        "ParentNotExisted": "Đơn vị quản lí cấp cha không tồn tại"
+      }
+    },
+    "Address": {
+      "AddressOverLength": "Địa chỉ quá dài"
+    },
+    "Email": {
+      "EmailEmpty": "Chưa nhập Email",
+      "EmailInvalid": "Email không hợp lệ"
+    },
+    "Status": {
+      "StatusNotExisted": "Trạng thái không tồn tại"
+    }
+  }
+}

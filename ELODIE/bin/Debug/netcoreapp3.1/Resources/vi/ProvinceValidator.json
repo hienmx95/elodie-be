@@ -1,0 +1,20 @@
+﻿{
+  "Province": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại",
+      "ProvinceInUsed": "Tỉnh/thành phố đã được sử dụng"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên cho Tỉnh/thành phố",
+      "NameOverLength": "Tên Tỉnh/thành phố quá dài",
+      "NameExisted": "Tên Tỉnh/thành phố đã tồn tại"
+    },
+    "Code": {
+      "CodeExisted": "Mã Tỉnh/thành phố đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã cho Tỉnh/thành phố",
+      "CodeOverLength": "Mã Tỉnh/thành phố quá dài",
+      "CodeHasSpecialCharacter": "Mã Tỉnh/thành phố không thể chứa khoảng trắng hoặc kí tự đặc biệt"
+    }
+
+  }
+}

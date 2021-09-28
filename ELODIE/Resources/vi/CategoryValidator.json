@@ -1,0 +1,23 @@
+﻿{
+  "Category": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại",
+      "CategoryInUsed": "Danh mục sản phẩm đã được sử dụng"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên danh mục sản phẩm",
+      "NameOverLength": "Tên danh mục sản phẩm quá dài",
+      "NameExisted": "Tên danh mục sản phẩm đã tồn tại"
+    },
+    "Code": {
+      "CodeExisted": "Mã danh mục sản phẩm đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã danh mục sản phẩm",
+      "CodeOverLength": "Mã danh mục sản phẩm quá dài",
+      "CodeHasSpecialCharacter": "Mã danh mục sản phẩm không thể chứa khoảng trắng hoặc kí tự Tiếng Việt"
+    },
+    "ParentId": {
+      "ParentNotExisted": "Danh mục sản phẩm cấp cha không tồn tại",
+      "ParentCantBeTheSameAsSelf": "Danh mục cha không thể được là chính danh mục này"
+    }
+  }
+}

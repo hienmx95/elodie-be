@@ -1,0 +1,66 @@
+﻿{
+  "AppUser": {
+    "Id": {
+      "IdNotExisted": "Tài khoản không không tồn tại",
+      "AppUserInUsed": "Không thể xoá tài khoản này"
+    },
+    "Username": {
+      "UsernameExisted": "Tên đăng nhập đã được sử dụng",
+      "UsernameEmpty": "Chưa nhập tên đăng nhập",
+      "UsernameNotExisted": "Tên đăng nhập không tồn tại",
+      "UsernameOverLength": "Tên đăng nhập quá dài",
+      "UsernameHasSpecialCharacter": "Tên đăng nhập không thể chứa khoảng trắng hoặc kí tự Tiếng Việt"
+    },
+    "DisplayName": {
+      "DisplayNameEmpty": "Chưa nhập tên hiển thị",
+      "DisplayNameOverLength": "Tên hiển thị quá dài"
+    },
+    "Email": {
+      "EmailExisted": "Email đã được sử dụng",
+      "EmailNotExisted": "Email không tồn tại",
+      "EmailEmpty": "Chưa nhập Email",
+      "EmailOverLength": "Email quá dài",
+      "EmailInvalid": "Email không hợp lệ"
+    },
+    "Phone": {
+      "PhoneEmpty": "Chưa nhập số điện thoại",
+      "PhoneOverLength": "Số điện thoại không hợp lệ"
+    },
+    "Address": {
+      "AddressOverLength": "Địa chỉ quá dài"
+    },
+    "Status": {
+      "StatusNotExisted": "Trạng thái không tồn tại"
+    },
+    "Sex": {
+      "SexEmpty": "Chưa chọn giới tính"
+    },
+    "Organization": {
+      "OrganizationNotExisted": "Đơn vị tổ chức không tồn tại",
+      "OrganizationEmpty": "Chưa chọn đơn vị tổ chức"
+    },
+    "Password": {
+      "PasswordNotMatch": "Mật khẩu không chính xác"
+    },
+    "Province": {
+      "ProvinceNotExisted": "Tỉnh/Thành phố không tồn tại",
+      "ProvinceEmpty": "Chưa chọn Tỉnh/Thành phố"
+    },
+    "OtpCode": {
+      "OtpCodeInvalid": "Mã OTP không hợp lệ"
+    },
+    "OtpExpired": {
+      "OtpExpired": "Mã OTP hết hạn"
+    },
+    "Position": {
+      "PositionIdNotExisted": "Mã chức vụ không tồn tại",
+      "PositionEmpty": "Chưa chọn mã chức vụ"
+    },
+    "ERouteScope": {
+      "ERouteScopeNotExisted": "Phạm vi tuyến không tồn tại"
+    },
+    "AppUserStoreMappings": {
+      "AppUserStoreMappingsEmpty": "Chưa thêm đại lý vào phạm vi đi tuyến cho nhân viên"
+    }
+  }
+}
