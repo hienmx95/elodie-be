@@ -1,9 +1,9 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM registry-dev.truesight.asia/truesight/aspnet:3.1-buster-slim AS base
+ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 
-FROM registry-dev.truesight.asia/truesight/dotnet-sdk:3.1-buster AS build
+ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["ELODIE.csproj", "./"]
 RUN dotnet restore "ELODIE.csproj"
