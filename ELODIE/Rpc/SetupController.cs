@@ -22,24 +22,24 @@ namespace ELODIE.Rpc
     public class SetupController : ControllerBase
     {
         private DataContext DataContext;
-        private IRabbitManager RabbitManager;
+        //private IRabbitManager RabbitManager;
         private IItemService ItemService;
         private ICurrentContext CurrentContext;
         private readonly IHttpContextAccessor HttpContextAccessor;
 
         private IUOW UOW;
 
-        public SetupController(DataContext DataContext, IRabbitManager RabbitManager, IItemService ItemService, ICurrentContext CurrentContext, IHttpContextAccessor HttpContextAccessor, IUOW UOW)
+        public SetupController(DataContext DataContext, IItemService ItemService, ICurrentContext CurrentContext, IHttpContextAccessor HttpContextAccessor, IUOW UOW)
         {
             this.DataContext = DataContext;
-            this.RabbitManager = RabbitManager;
+            //this.RabbitManager = RabbitManager;
             this.ItemService = ItemService;
             this.CurrentContext = CurrentContext;
             this.HttpContextAccessor = HttpContextAccessor;
             this.UOW = UOW;
         }
 
-        [HttpGet, Route("rpc/ELODIE/setup/category-children-reset")]
+        [HttpGet, Route("rpc/elodie/setup/category-children-reset")]
         public async Task<ActionResult> CategoryChildrenReset()
         {
             List<Category> AllCategories = await UOW.CategoryRepository.List(new CategoryFilter
@@ -55,7 +55,7 @@ namespace ELODIE.Rpc
             return Ok();
         }
 
-        [HttpGet, Route("rpc/ELODIE/setup/supplier-reset")]
+        [HttpGet, Route("rpc/elodie/setup/supplier-reset")]
         public async Task<ActionResult> SupplierReset()
         {
             List<long> SupplierIds = (await UOW.SupplierRepository.List(new SupplierFilter
@@ -73,7 +73,7 @@ namespace ELODIE.Rpc
         }
 
         #region Publish Data
-        [HttpGet, Route("rpc/ELODIE/setup/publish-data")]
+        [HttpGet, Route("rpc/elodie/setup/publish-data")]
         public async Task<ActionResult> PublishData()
         {
             await PublishBrand();
@@ -97,7 +97,7 @@ namespace ELODIE.Rpc
         {
             List<long> BrandIds = await DataContext.Brand.Select(x => x.Id).ToListAsync();
             List<Brand> Brands = await UOW.BrandRepository.List(BrandIds);
-            RabbitManager.PublishList(Brands, RoutingKeyEnum.BrandSync);
+            //RabbitManager.PublishList(Brands, RoutingKeyEnum.BrandSync);
             return Ok();
         }
         #endregion
@@ -107,7 +107,7 @@ namespace ELODIE.Rpc
         {
             List<long> CategoryIds = await DataContext.Category.Select(x => x.Id).ToListAsync();
             List<Category> Categorys = await UOW.CategoryRepository.List(CategoryIds);
-            RabbitManager.PublishList(Categorys, RoutingKeyEnum.CategorySync);
+            //RabbitManager.PublishList(Categorys, RoutingKeyEnum.CategorySync);
             return Ok();
         }
         #endregion
@@ -117,7 +117,7 @@ namespace ELODIE.Rpc
         {
             List<long> DistrictIds = DataContext.District.Select(x => x.Id).ToList();
             List<District> Districts = await UOW.DistrictRepository.List(DistrictIds);
-            RabbitManager.PublishList(Districts, RoutingKeyEnum.DistrictSync);
+            //RabbitManager.PublishList(Districts, RoutingKeyEnum.DistrictSync);
             return Ok();
         }
         #endregion
@@ -127,7 +127,7 @@ namespace ELODIE.Rpc
         {
             List<long> NationIds = DataContext.Nation.Select(x => x.Id).ToList();
             List<Nation> Nations = await UOW.NationRepository.List(NationIds);
-            RabbitManager.PublishList(Nations, RoutingKeyEnum.NationSync);
+            //RabbitManager.PublishList(Nations, RoutingKeyEnum.NationSync);
             return Ok();
         }
         #endregion
@@ -137,7 +137,7 @@ namespace ELODIE.Rpc
         {
             List<long> ProductIds = DataContext.Product.Select(x => x.Id).ToList();
             List<Product> Products = await UOW.ProductRepository.List(ProductIds);
-            RabbitManager.PublishList(Products, RoutingKeyEnum.ProductSync);
+            //RabbitManager.PublishList(Products, RoutingKeyEnum.ProductSync);
             return Ok();
         }
         #endregion
@@ -147,7 +147,7 @@ namespace ELODIE.Rpc
         {
             List<long> ProductGroupingIds = DataContext.ProductGrouping.Select(x => x.Id).ToList();
             List<ProductGrouping> ProductGroupings = await UOW.ProductGroupingRepository.List(ProductGroupingIds);
-            RabbitManager.PublishList(ProductGroupings, RoutingKeyEnum.ProductGroupingSync);
+            //RabbitManager.PublishList(ProductGroupings, RoutingKeyEnum.ProductGroupingSync);
             return Ok();
         }
         #endregion
@@ -157,7 +157,7 @@ namespace ELODIE.Rpc
         {
             List<long> ProductTypeIds = DataContext.ProductType.Select(x => x.Id).ToList();
             List<ProductType> ProductTypes = await UOW.ProductTypeRepository.List(ProductTypeIds);
-            RabbitManager.PublishList(ProductTypes, RoutingKeyEnum.ProductTypeSync);
+            //RabbitManager.PublishList(ProductTypes, RoutingKeyEnum.ProductTypeSync);
             return Ok();
         }
         #endregion
@@ -167,7 +167,7 @@ namespace ELODIE.Rpc
         {
             List<long> SupplierIds = DataContext.Supplier.Select(x => x.Id).ToList();
             List<Supplier> Suppliers = await UOW.SupplierRepository.List(SupplierIds);
-            RabbitManager.PublishList(Suppliers, RoutingKeyEnum.SupplierSync);
+            //RabbitManager.PublishList(Suppliers, RoutingKeyEnum.SupplierSync);
             return Ok();
         }
         #endregion
@@ -177,7 +177,7 @@ namespace ELODIE.Rpc
         {
             List<long> ProvinceIds = DataContext.Province.Select(x => x.Id).ToList();
             List<Province> Provinces = await UOW.ProvinceRepository.List(ProvinceIds);
-            RabbitManager.PublishList(Provinces, RoutingKeyEnum.ProvinceSync);
+            //RabbitManager.PublishList(Provinces, RoutingKeyEnum.ProvinceSync);
             return Ok();
         }
         #endregion
@@ -187,7 +187,7 @@ namespace ELODIE.Rpc
         {
             List<long> TaxTypeIds = DataContext.TaxType.Select(x => x.Id).ToList();
             List<TaxType> TaxTypes = await UOW.TaxTypeRepository.List(TaxTypeIds);
-            RabbitManager.PublishList(TaxTypes, RoutingKeyEnum.TaxTypeSync);
+            //RabbitManager.PublishList(TaxTypes, RoutingKeyEnum.TaxTypeSync);
             return Ok();
         }
         #endregion
@@ -197,7 +197,7 @@ namespace ELODIE.Rpc
         {
             List<long> UnitOfMeasureIds = DataContext.UnitOfMeasure.Select(x => x.Id).ToList();
             List<UnitOfMeasure> UnitOfMeasures = await UOW.UnitOfMeasureRepository.List(UnitOfMeasureIds);
-            RabbitManager.PublishList(UnitOfMeasures, RoutingKeyEnum.UnitOfMeasureSync);
+            //RabbitManager.PublishList(UnitOfMeasures, RoutingKeyEnum.UnitOfMeasureSync);
             return Ok();
         }
         #endregion
@@ -207,7 +207,7 @@ namespace ELODIE.Rpc
         {
             List<long> UnitOfMeasureGroupingIds = DataContext.UnitOfMeasureGrouping.Select(x => x.Id).ToList();
             List<UnitOfMeasureGrouping> UnitOfMeasureGroupings = await UOW.UnitOfMeasureGroupingRepository.List(UnitOfMeasureGroupingIds);
-            RabbitManager.PublishList(UnitOfMeasureGroupings, RoutingKeyEnum.UnitOfMeasureGroupingSync);
+            //RabbitManager.PublishList(UnitOfMeasureGroupings, RoutingKeyEnum.UnitOfMeasureGroupingSync);
             return Ok();
         }
         #endregion
@@ -217,22 +217,22 @@ namespace ELODIE.Rpc
         {
             List<long> WardIds = DataContext.Ward.Select(x => x.Id).ToList();
             List<Ward> Wards = await UOW.WardRepository.List(WardIds);
-            RabbitManager.PublishList(Wards, RoutingKeyEnum.WardSync);
+            //RabbitManager.PublishList(Wards, RoutingKeyEnum.WardSync);
             return Ok();
         }
         #endregion
         #endregion
 
-        [HttpGet, Route("rpc/ELODIE/setup/init-all")]
+        [HttpGet, Route("rpc/elodie/setup/init-all")]
         public ActionResult InitAll()
         {
             InitEnum();
             InitRoute();
             InitAdmin();
 
-            RestClient portalClient = new RestClient(InternalServices.PORTAL);
-            RestRequest initPortalRequest = new RestRequest("/rpc/portal/setup/init");
-            initPortalRequest.Method = Method.GET;
+            RestClient ELODIEClient = new RestClient(InternalServices.ELODIE);
+            RestRequest initELODIERequest = new RestRequest("/rpc/ELODIE/setup/init");
+            initELODIERequest.Method = Method.GET;
 
             RestClient dmsClient = new RestClient(InternalServices.DMS);
             RestRequest initDMSRequest = new RestRequest("/rpc/dms/setup/init");
@@ -251,9 +251,9 @@ namespace ELODIE.Rpc
             initCRMRequest.Method = Method.GET;
             try
             {
-                var r1 = portalClient.Execute(initPortalRequest);
+                var r1 = ELODIEClient.Execute(initELODIERequest);
                 if (r1.StatusCode != System.Net.HttpStatusCode.OK && r1.StatusCode != System.Net.HttpStatusCode.NotFound)
-                    return BadRequest("Lỗi Init Portal");
+                    return BadRequest("Lỗi Init ELODIE");
                 var r2 = dmsClient.Execute(initDMSRequest);
                 if (r2.StatusCode != System.Net.HttpStatusCode.OK && r2.StatusCode != System.Net.HttpStatusCode.NotFound)
                     return BadRequest("Lỗi Init DMS");
@@ -275,7 +275,7 @@ namespace ELODIE.Rpc
             return Ok();
         }
 
-        [HttpGet, Route("rpc/ELODIE/setup/init")]
+        [HttpGet, Route("rpc/elodie/setup/init")]
         public ActionResult Init()
         {
             InitEnum();
@@ -284,7 +284,7 @@ namespace ELODIE.Rpc
             return Ok();
         }
 
-        [HttpGet, Route("rpc/ELODIE/setup/init-data")]
+        [HttpGet, Route("rpc/elodie/setup/init-data")]
         public ActionResult InitData()
         {
             RestClient esClient = new RestClient(InternalServices.ES);
@@ -343,7 +343,7 @@ namespace ELODIE.Rpc
                     if (r5.ErrorException != null)
                         throw r5.ErrorException;
                     else
-                        return BadRequest($"Portal: {r5.StatusCode}");
+                        return BadRequest($"ELODIE: {r5.StatusCode}");
                 }
             }
             catch (Exception ex)
@@ -818,6 +818,11 @@ namespace ELODIE.Rpc
             foreach (Type type in routeTypes)
             {
                 MenuDAO Menu = Menus.Where(m => m.Code == type.Name).FirstOrDefault();
+                if (Menu.Name == "ProductRoute")
+                {
+                    var a = 1;
+                }
+                    
                 var value = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                .Where(fi => !fi.IsInitOnly && fi.FieldType == typeof(Dictionary<string, IEnumerable<string>>))
                .Select(x => (Dictionary<string, IEnumerable<string>>)x.GetValue(x))
@@ -884,7 +889,7 @@ namespace ELODIE.Rpc
                 Code = x.Code,
                 Name = x.Name,
             }).ToList();
-            RabbitManager.PublishList(Statuses, RoutingKeyEnum.StatusSync);
+            //RabbitManager.PublishList(Statuses, RoutingKeyEnum.StatusSync);
         }
 
         private void InitSexEnum()
@@ -902,7 +907,7 @@ namespace ELODIE.Rpc
                 Code = x.Code,
                 Name = x.Name,
             }).ToList();
-            RabbitManager.PublishList(Sexes, RoutingKeyEnum.SexSync);
+            //RabbitManager.PublishList(Sexes, RoutingKeyEnum.SexSync);
         }
 
         private void InitColorEnum()
@@ -920,7 +925,7 @@ namespace ELODIE.Rpc
                 Code = x.Code,
                 Name = x.Name,
             }).ToList();
-            RabbitManager.PublishList(Colores, RoutingKeyEnum.ColorSync);
+            //RabbitManager.PublishList(Colores, RoutingKeyEnum.ColorSync);
         }
 
         private void InitUsedVariationEnum()
@@ -938,7 +943,7 @@ namespace ELODIE.Rpc
                 Code = x.Code,
                 Name = x.Name,
             }).ToList();
-            RabbitManager.PublishList(UsedVariationes, RoutingKeyEnum.UsedVariationSync);
+            //RabbitManager.PublishList(UsedVariationes, RoutingKeyEnum.UsedVariationSync);
         }
 
         private void InitWorkflowEnum()
@@ -1040,7 +1045,7 @@ namespace ELODIE.Rpc
                 Code = x.Code,
                 Name = x.Name,
             }).ToList();
-            RabbitManager.PublishList(EntityComponentes, RoutingKeyEnum.EntityComponentSync);
+            //RabbitManager.PublishList(EntityComponentes, RoutingKeyEnum.EntityComponentSync);
         }
 
         private void InitEntityTypeEnum()
@@ -1058,7 +1063,7 @@ namespace ELODIE.Rpc
                 Code = x.Code,
                 Name = x.Name,
             }).ToList();
-            RabbitManager.PublishList(EntityTypees, RoutingKeyEnum.EntityTypeSync);
+            //RabbitManager.PublishList(EntityTypees, RoutingKeyEnum.EntityTypeSync);
         }
 
         #region tool up ảnh

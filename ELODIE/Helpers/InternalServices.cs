@@ -9,7 +9,7 @@ namespace ELODIE.Helpers
     {
         public static string UTILS { get; set; }
         public static string DMS { get; set; }
-        public static string PORTAL { get; set; }
+        public static string ELODIE { get; set; }
         public static string AMS { get; set; }
         public static string CRM { get; set; }
         public static string CMS_EXPORT { get; set; }

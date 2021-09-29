@@ -21,7 +21,7 @@ namespace ELODIE.Rpc
             this.CurrentContext = CurrentContext;
         }
 
-        [HttpPost, Route("rpc/ELODIE/permission/list-path")]
+        [HttpPost, Route("rpc/elodie/permission/list-path")]
         public async Task<List<string>> ListPath()
         {
             return await PermissionService.ListPath(CurrentContext.UserId);

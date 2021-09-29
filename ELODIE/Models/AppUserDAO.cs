@@ -25,6 +25,9 @@ namespace ELODIE.Models
         /// Tên đăng nhập
         /// </summary>
         public string Username { get; set; }
+        public string Password { get; set; }
+        public string OtpCode { get; set; }
+        public DateTime? OtpExpired { get; set; }
         /// <summary>
         /// Tên hiển thị
         /// </summary>

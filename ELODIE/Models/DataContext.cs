@@ -95,7 +95,7 @@ namespace ELODIE.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("data source=192.168.20.200;initial catalog=ELODIE;persist security info=True;user id=sa;password=123@123a;multipleactiveresultsets=True;");
+                optionsBuilder.UseSqlServer("data source=192.168.20.200;initial catalog=MDM;persist security info=True;user id=sa;password=123@123a;multipleactiveresultsets=True;");
             }
         }
 
@@ -153,7 +153,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<AppUserDAO>(entity =>
             {
-                entity.ToTable("AppUser", "ELODIE");
+                entity.ToTable("AppUser", "MDM");
 
                 entity.Property(e => e.Id)
                     .HasComment("Id")
@@ -190,6 +190,14 @@ namespace ELODIE.Models
                 entity.Property(e => e.Email)
                     .HasMaxLength(500)
                     .HasComment("Địa chỉ email");
+
+                entity.Property(e => e.OtpCode).HasMaxLength(50);
+
+                entity.Property(e => e.OtpExpired).HasColumnType("datetime");
+
+                entity.Property(e => e.Password)
+                    //.IsRequired()
+                    .HasMaxLength(500);
 
                 entity.Property(e => e.OrganizationId).HasComment("Đơn vị công tác");
 
@@ -245,7 +253,7 @@ namespace ELODIE.Models
                 entity.HasKey(e => new { e.AppUserId, e.RoleId })
                     .HasName("PK_UserRoleMapping");
 
-                entity.ToTable("AppUserRoleMapping", "ELODIE");
+                entity.ToTable("AppUserRoleMapping", "MDM");
 
                 entity.Property(e => e.AppUserId).HasComment("Id nhân viên");
 
@@ -268,7 +276,7 @@ namespace ELODIE.Models
             {
                 entity.HasKey(e => new { e.AppUserId, e.SiteId });
 
-                entity.ToTable("AppUserSiteMapping", "ELODIE");
+                entity.ToTable("AppUserSiteMapping", "MDM");
 
                 entity.HasOne(d => d.AppUser)
                     .WithMany(p => p.AppUserSiteMappings)
@@ -285,7 +293,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<BrandDAO>(entity =>
             {
-                entity.ToTable("Brand", "ELODIE");
+                entity.ToTable("Brand", "MDM");
 
                 entity.Property(e => e.Id).HasComment("Id");
 
@@ -326,7 +334,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<CategoryDAO>(entity =>
             {
-                entity.ToTable("Category", "ELODIE");
+                entity.ToTable("Category", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -369,7 +377,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<CodeGeneratorRuleDAO>(entity =>
             {
-                entity.ToTable("CodeGeneratorRule", "ELODIE");
+                entity.ToTable("CodeGeneratorRule", "MDM");
 
                 entity.Property(e => e.CreatedAt).HasColumnType("datetime");
 
@@ -394,7 +402,7 @@ namespace ELODIE.Models
             {
                 entity.HasKey(e => new { e.CodeGeneratorRuleId, e.EntityComponentId });
 
-                entity.ToTable("CodeGeneratorRuleEntityComponentMapping", "ELODIE");
+                entity.ToTable("CodeGeneratorRuleEntityComponentMapping", "MDM");
 
                 entity.Property(e => e.Value).HasMaxLength(500);
 
@@ -445,7 +453,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<DistrictDAO>(entity =>
             {
-                entity.ToTable("District", "ELODIE");
+                entity.ToTable("District", "MDM");
 
                 entity.Property(e => e.Id).HasComment("Id");
 
@@ -575,12 +583,12 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<IdGeneratorDAO>(entity =>
             {
-                entity.ToTable("IdGenerator", "ELODIE");
+                entity.ToTable("IdGenerator", "MDM");
             });
 
             modelBuilder.Entity<ImageDAO>(entity =>
             {
-                entity.ToTable("Image", "ELODIE");
+                entity.ToTable("Image", "MDM");
 
                 entity.Property(e => e.Id)
                     .HasComment("Id")
@@ -615,7 +623,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<ItemDAO>(entity =>
             {
-                entity.ToTable("Item", "ELODIE");
+                entity.ToTable("Item", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -654,7 +662,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<ItemHistoryDAO>(entity =>
             {
-                entity.ToTable("ItemHistory", "ELODIE");
+                entity.ToTable("ItemHistory", "MDM");
 
                 entity.Property(e => e.NewPrice).HasColumnType("decimal(18, 4)");
 
@@ -679,7 +687,7 @@ namespace ELODIE.Models
             {
                 entity.HasKey(e => new { e.ItemId, e.ImageId });
 
-                entity.ToTable("ItemImageMapping", "ELODIE");
+                entity.ToTable("ItemImageMapping", "MDM");
 
                 entity.HasOne(d => d.Image)
                     .WithMany(p => p.ItemImageMappings)
@@ -698,7 +706,7 @@ namespace ELODIE.Models
             {
                 entity.HasKey(e => new { e.ItemId, e.VariationId });
 
-                entity.ToTable("ItemVariationMapping", "ELODIE");
+                entity.ToTable("ItemVariationMapping", "MDM");
 
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.ItemVariationMappings)
@@ -800,7 +808,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<NationDAO>(entity =>
             {
-                entity.ToTable("Nation", "ELODIE");
+                entity.ToTable("Nation", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -825,7 +833,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<OrganizationDAO>(entity =>
             {
-                entity.ToTable("Organization", "ELODIE");
+                entity.ToTable("Organization", "MDM");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
@@ -977,7 +985,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<ProductDAO>(entity =>
             {
-                entity.ToTable("Product", "ELODIE");
+                entity.ToTable("Product", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1065,7 +1073,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<ProductGroupingDAO>(entity =>
             {
-                entity.ToTable("ProductGrouping", "ELODIE");
+                entity.ToTable("ProductGrouping", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1103,7 +1111,7 @@ namespace ELODIE.Models
             {
                 entity.HasKey(e => new { e.ProductId, e.ImageId });
 
-                entity.ToTable("ProductImageMapping", "ELODIE");
+                entity.ToTable("ProductImageMapping", "MDM");
 
                 entity.HasOne(d => d.Image)
                     .WithMany(p => p.ProductImageMappings)
@@ -1123,7 +1131,7 @@ namespace ELODIE.Models
                 entity.HasKey(e => new { e.ProductId, e.ProductGroupingId })
                     .HasName("PK_ProductProductGrouping");
 
-                entity.ToTable("ProductProductGroupingMapping", "ELODIE");
+                entity.ToTable("ProductProductGroupingMapping", "MDM");
 
                 entity.HasOne(d => d.ProductGrouping)
                     .WithMany(p => p.ProductProductGroupingMappings)
@@ -1140,7 +1148,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<ProductTypeDAO>(entity =>
             {
-                entity.ToTable("ProductType", "ELODIE");
+                entity.ToTable("ProductType", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1167,7 +1175,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<ProvinceDAO>(entity =>
             {
-                entity.ToTable("Province", "ELODIE");
+                entity.ToTable("Province", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1374,7 +1382,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<SiteDAO>(entity =>
             {
-                entity.ToTable("Site", "ELODIE");
+                entity.ToTable("Site", "MDM");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
@@ -1434,7 +1442,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<SupplierDAO>(entity =>
             {
-                entity.ToTable("Supplier", "ELODIE");
+                entity.ToTable("Supplier", "MDM");
 
                 entity.Property(e => e.Address).HasMaxLength(2000);
 
@@ -1498,7 +1506,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<SupplierBankAccountDAO>(entity =>
             {
-                entity.ToTable("SupplierBankAccount", "ELODIE");
+                entity.ToTable("SupplierBankAccount", "MDM");
 
                 entity.Property(e => e.BankAccount)
                     .IsRequired()
@@ -1529,7 +1537,7 @@ namespace ELODIE.Models
             {
                 entity.HasKey(e => new { e.SupplierId, e.CategoryId });
 
-                entity.ToTable("SupplierCategoryMapping", "ELODIE");
+                entity.ToTable("SupplierCategoryMapping", "MDM");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.SupplierCategoryMappings)
@@ -1546,7 +1554,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<SupplierContactorDAO>(entity =>
             {
-                entity.ToTable("SupplierContactor", "ELODIE");
+                entity.ToTable("SupplierContactor", "MDM");
 
                 entity.Property(e => e.CreatedAt).HasColumnType("datetime");
 
@@ -1575,7 +1583,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<TaxTypeDAO>(entity =>
             {
-                entity.ToTable("TaxType", "ELODIE");
+                entity.ToTable("TaxType", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1602,7 +1610,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<ThemeDAO>(entity =>
             {
-                entity.ToTable("Theme", "ELODIE");
+                entity.ToTable("Theme", "MDM");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
@@ -1613,7 +1621,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<UnitOfMeasureDAO>(entity =>
             {
-                entity.ToTable("UnitOfMeasure", "ELODIE");
+                entity.ToTable("UnitOfMeasure", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1640,7 +1648,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<UnitOfMeasureGroupingDAO>(entity =>
             {
-                entity.ToTable("UnitOfMeasureGrouping", "ELODIE");
+                entity.ToTable("UnitOfMeasureGrouping", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1673,7 +1681,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<UnitOfMeasureGroupingContentDAO>(entity =>
             {
-                entity.ToTable("UnitOfMeasureGroupingContent", "ELODIE");
+                entity.ToTable("UnitOfMeasureGroupingContent", "MDM");
 
                 entity.HasOne(d => d.UnitOfMeasureGrouping)
                     .WithMany(p => p.UnitOfMeasureGroupingContents)
@@ -1705,7 +1713,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<VariationDAO>(entity =>
             {
-                entity.ToTable("Variation", "ELODIE");
+                entity.ToTable("Variation", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1730,7 +1738,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<VariationGroupingDAO>(entity =>
             {
-                entity.ToTable("VariationGrouping", "ELODIE");
+                entity.ToTable("VariationGrouping", "MDM");
 
                 entity.Property(e => e.Code).HasMaxLength(500);
 
@@ -1753,7 +1761,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<WardDAO>(entity =>
             {
-                entity.ToTable("Ward", "ELODIE");
+                entity.ToTable("Ward", "MDM");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -1784,7 +1792,7 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<WarehouseDAO>(entity =>
             {
-                entity.ToTable("Warehouse", "ELODIE");
+                entity.ToTable("Warehouse", "MDM");
 
                 entity.Property(e => e.Address).HasMaxLength(500);
 

@@ -121,50 +121,33 @@ namespace ELODIE
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(x =>
-            {
-                x.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        context.Token = context.Request.Cookies["Token"];
-                        return Task.CompletedTask;
-                    }
-                };
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    IssuerSigningKeyResolver = (token, secutiryToken, kid, validationParameters) =>
-                    {
-                        string PublicRSAKeyBase64 = Configuration["Config:PublicRSAKey"];
-                        byte[] PublicRSAKeyBytes = Convert.FromBase64String(PublicRSAKeyBase64);
-                        string PublicRSAKey = Encoding.Default.GetString(PublicRSAKeyBytes);
-
-                        RSAParameters rsaParams;
-                        using (var tr = new StringReader(PublicRSAKey))
-                        {
-                            var pemReader = new PemReader(tr);
-                            var publicRsaParams = pemReader.ReadObject() as RsaKeyParameters;
-                            if (publicRsaParams == null)
-                            {
-                                throw new Exception("Could not read RSA public key");
-                            }
-                            rsaParams = DotNetUtilities.ToRSAParameters(publicRsaParams);
-                        }
-
-                        RSA rsa = RSA.Create();
-                        rsa.ImportParameters(rsaParams);
-
-                        SecurityKey RSASecurityKey = new RsaSecurityKey(rsa);
-                        return new List<SecurityKey> { RSASecurityKey };
-                    }
-                };
-            });
+           .AddJwtBearer(x =>
+           {
+               x.Events = new JwtBearerEvents
+               {
+                   OnMessageReceived = context =>
+                   {
+                       context.Token = context.Request.Cookies["Token"];
+                       return Task.CompletedTask;
+                   }
+               };
+               x.RequireHttpsMetadata = false;
+               x.SaveToken = true;
+               x.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuerSigningKey = true,
+                   ValidateLifetime = true,
+                   ValidateIssuer = false,
+                   ValidateAudience = false,
+                   IssuerSigningKeyResolver = (token, secutiryToken, kid, validationParameters) =>
+                   {
+                       var secretKey = Configuration["Config:SecretKey"];
+                       var key = Encoding.ASCII.GetBytes(secretKey);
+                       SecurityKey issuerSigningKey = new SymmetricSecurityKey(key);
+                       return new List<SecurityKey>() { issuerSigningKey };
+                   }
+               };
+           });
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
@@ -186,7 +169,7 @@ namespace ELODIE
             {
                 InternalServices.UTILS = Configuration["InternalServices:UTILS"];
                 InternalServices.DMS = Configuration["InternalServices:DMS"];
-                InternalServices.PORTAL = Configuration["InternalServices:PORTAL"];
+                InternalServices.ELODIE = Configuration["InternalServices:ELODIE"];
                 InternalServices.CMS_EXPORT = Configuration["InternalServices:CMS_EXPORT"];
                 InternalServices.CRM = Configuration["InternalServices:CRM"];
                 InternalServices.AMS = Configuration["InternalServices:AMS"];

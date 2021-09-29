@@ -127,7 +127,7 @@ namespace ELODIE.Services.MProduct
                 Product.VariationCounter = Product.Items.Count;
             }
 
-            Product.ProductHistories = await GetHistories(Product);
+            //Product.ProductHistories = await GetHistories(Product);
 
             return Product;
         }

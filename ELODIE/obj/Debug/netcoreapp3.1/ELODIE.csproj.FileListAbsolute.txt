@@ -1,5 +1,4 @@
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\appsettings.Development.json
-I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\appsettings.Devyt.json
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\appsettings.json
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\AlbumValidator.json
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\AppUserValidator.json

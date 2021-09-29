@@ -12,6 +12,9 @@ namespace ELODIE.Entities
         public string Username { get; set; }
         public string Password { get; set; }
         public string NewPassword { get; set; }
+        public string OtpCode { get; set; }
+        public DateTime? OtpExpired { get; set; }
+        public string Token { get; set; }
         public string DisplayName { get; set; }
         public string Address { get; set; }
         public string Avatar { get; set; }
