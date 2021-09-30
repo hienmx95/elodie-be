@@ -9,10 +9,9 @@ namespace ELODIE.Rpc.app_user
 {
     public class AppUserRoute : Root
     {
-        public const string Parent = Module + "/account";
-        public const string Master = Module + "/account/app-user/app-user-master";
-        public const string Detail = Module + "/account/app-user/app-user-detail/*";
-        public const string Mobile = Module + "/app-user/master-data.profile";
+        public const string Parent = Module + "/";
+        public const string Master = Module + "/app-user/app-user-master";
+        public const string Detail = Module + "/app-user/app-user-detail";
         private const string Default = Rpc + Module + "/app-user";
         public const string Count = Default + "/count";
         public const string List = Default + "/list";
