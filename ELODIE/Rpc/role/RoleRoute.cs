@@ -9,10 +9,12 @@ namespace ELODIE.Rpc.role
     [DisplayName("Vai trò")]
     public class RoleRoute : Root
     {
-        public const string Parent = Module + "/system-configuration/role";
-        public const string Master = Module + "/system-configuration/role/role-master";
-        public const string Detail = Module + "/system-configuration/role/role-detail/*";
-        private const string Default = Rpc + Module + "/role";
+        public const string Parent = Module + "/role";
+        public const string Master = Module + "/role/role-master";
+        public const string Detail = Module + "/role/role-detail";
+        public const string Other = Module + "/role/role-detail/*";
+
+        public const string Default = Rpc + Module + "/role";
         public const string Count = Default + "/count";
         public const string List = Default + "/list";
         public const string Get = Default + "/get";
@@ -20,8 +22,11 @@ namespace ELODIE.Rpc.role
         public const string Create = Default + "/create";
         public const string Update = Default + "/update";
         public const string Delete = Default + "/delete";
+        public const string BulkDelete = Default + "/bulk-delete";
         public const string AssignAppUser = Default + "/assign-app-user";
         public const string GetMenu = Default + "/get-menu";
+
+        public const string GetSingleListAPI = Default + "/get-single-list-api";
 
         public const string SingleListAppUser = Default + "/single-list-app-user";
         public const string SingleListCurrentUser = Default + "/single-list-current-user";
@@ -56,60 +61,67 @@ namespace ELODIE.Rpc.role
             { nameof(RoleFilter.Name), FieldTypeEnum.STRING.Id },
             { nameof(RoleFilter.StatusId), FieldTypeEnum.ID.Id },
         };
-        private static List<string> FilterList = new List<string> {
 
-        };
-        private static List<string> SingleList = new List<string> {
-            SingleListAppUser, SingleListStatus, SingleListMenu, SingleListBrand, SingleListOrganization, SingleListProduct, SingleListProductGrouping, SingleListProductType,
-                SingleListSupplier, SingleListWarehouse, SingleListField, SingleListPermissionOperator, SingleListCurrentUser
-        };
-        private static List<string> CountList = new List<string>
+        public static List<string> SingleList = new List<string>
         {
-            CountPermission, ListPermission, CountAppUser, ListAppUser,
+            GetSingleListAPI,
+            SingleListAppUser,
+            SingleListBrand,
+            SingleListCurrentUser,
+            SingleListERouteType,
+            SingleListField,
+            SingleListMenu,
+            SingleListOrganization,
+            SingleListPermissionOperator,
+            SingleListProduct,
+            SingleListProductGrouping,
+            SingleListProductType,
+            SingleListRequestState,
+            SingleListStatus,
+            SingleListSupplier,
+            SingleListWarehouse,
         };
+
         public static Dictionary<string, IEnumerable<string>> Action = new Dictionary<string, IEnumerable<string>>
         {
             { "Tìm kiếm", new List<string> {
                 Parent,
-                Master, Count, List, 
-                Get, 
-                }.Concat(SingleList) },
+                Master, Count, List, Get, Clone,
+                }.Concat(SingleList)
+            },
             { "Thêm", new List<string> {
                 Parent,
-                Master, Count, List, 
-                Get, 
-                Clone, GetPermission, CreatePermission, UpdatePermission, DeletePermission,
+                Master, Count, List, Get, Clone, CountPermission, ListPermission, GetPermission, CreatePermission, UpdatePermission, DeletePermission,
                 Detail, Create, GetMenu,
-                }.Concat(SingleList).Concat(CountList)
+                SingleListStatus, SingleListCurrentUser
+            }.Concat(SingleList)
             },
             { "Sửa", new List<string> {
                 Parent,
-                Master, Count, List, 
-                Get,  
-                GetPermission, CreatePermission, UpdatePermission, DeletePermission,
-                Detail, Update, GetMenu, 
-                }.Concat(SingleList).Concat(CountList)
+                Master, Count, List, Get, Clone, CountPermission, ListPermission, GetPermission, CreatePermission, UpdatePermission, DeletePermission,
+                Detail, Update, GetMenu,
+            }.Concat(SingleList)
             },
-             { "Gán người dùng", new List<string> {
-                Parent,
-                Master, Count, List, 
-                Get, 
-                Detail, AssignAppUser,
-                }.Concat(SingleList).Concat(CountList)
+            { "Gán người dùng", new List<string> {
+                 Parent,
+                Master, Count, List, Get, Clone,
+                CountAppUser, ListAppUser,
+                Detail, AssignAppUser, 
+                
+                Other,
+            }.Concat(SingleList)
             },
-             { "Tạo nhanh quyền", new List<string> {
-                Parent,
-                Master, Count, List, 
-                Get,
-                Detail, CreatePermission, GetMenu, GetPermission, CreatePermission, UpdatePermission, DeletePermission,
-                }.Concat(SingleList).Concat(CountList)
+            { "Tạo nhanh quyền", new List<string> {
+                 Parent,
+                Master, Count, List, Get, Clone,
+                Detail, CreatePermission, GetMenu, Master, Count, List, Get, CountPermission, ListPermission, GetPermission, CreatePermission, UpdatePermission, DeletePermission,
+            }.Concat(SingleList)
             },
             { "Xoá", new List<string> {
                 Parent,
-                Master, Count, List, 
-                Get,
-                Detail, Delete,
-                }.Concat(CountList) 
+                Master, Count, List, Get, Clone,
+                Detail, Delete, BulkDelete,
+            }.Concat(SingleList)
             },
         };
     }

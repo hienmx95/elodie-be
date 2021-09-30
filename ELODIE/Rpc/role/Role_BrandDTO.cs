@@ -21,7 +21,7 @@ namespace ELODIE.Rpc.role
             this.Name = Brand.Name;
             this.Description = Brand.Description;
             this.StatusId = Brand.StatusId;
-            this.UpdateTime = Brand.UpdatedAt;
+            //this.UpdateTime = Brand.UpdateTime;
             this.Status = Brand.Status == null ? null : new Role_StatusDTO(Brand.Status);
             this.Errors = Brand.Errors;
         }

@@ -5,11 +5,38 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CaseExtensions;
 
 namespace ELODIE.Rpc.role
 {
-    public partial class RoleController : RpcController
+    public partial class RoleController : RpcController 
     {
+
+
+        [Route(RoleRoute.GetSingleListAPI), HttpPost]
+        public async Task<ActionResult<Role_SingleListAPIDTO>> GetSingleListAPI([FromBody] Role_SingleListAPIDTO Role_SingleListAPIDTO)
+        {
+            string FieldName = Role_SingleListAPIDTO.FieldName;
+
+            if (FieldName == null)
+            {
+                return BadRequest("Chưa gửi FieldName");
+            }
+
+            FieldName = FieldName.Substring(0, FieldName.Length - 2); // remove suffix "Id"
+
+            var SingleListRoutes = RoleRoute.SingleList;
+            var Route = RoleRoute.Default + "/single-list-" + FieldName.ToKebabCase();
+
+            if (!SingleListRoutes.Contains(Route))
+            {
+                return BadRequest("Không tồn tại API SingleList cho field này");
+            }
+
+            Role_SingleListAPIDTO._API = Route;
+            return Role_SingleListAPIDTO;
+        }
+
 
         [Route(RoleRoute.SingleListCurrentUser), HttpPost]
         public async Task<List<GenericEnum>> SingleListCurrentUser()
@@ -190,7 +217,6 @@ namespace ELODIE.Rpc.role
                 .Select(x => new Role_SupplierDTO(x)).ToList();
             return Role_SupplierDTOs;
         }
-
 
         [Route(RoleRoute.SingleListField), HttpPost]
         public async Task<List<Role_FieldDTO>> SingleListField([FromBody] Role_FieldFilterDTO Role_FieldFilterDTO)

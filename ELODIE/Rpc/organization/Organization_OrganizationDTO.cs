@@ -1,11 +1,11 @@
-﻿using ELODIE.Common;
+using ELODIE.Common;
 using ELODIE.Entities;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ELODIE.Rpc.role
+namespace ELODIE.Rpc.organization
 {
-    public class Role_OrganizationDTO : DataDTO
+    public class Organization_OrganizationDTO : DataDTO
     {
         public long Id { get; set; }
         public string Code { get; set; }
@@ -17,12 +17,13 @@ namespace ELODIE.Rpc.role
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
-        public Role_OrganizationDTO Parent { get; set; }
-        public Role_StatusDTO Status { get; set; }
+        public bool IsDisplay { get; set; }
+        public Organization_OrganizationDTO Parent { get; set; }
+        public Organization_StatusDTO Status { get; set; }
 
-        public List<Role_AppUserDTO> AppUsers { get; set; }
-        public Role_OrganizationDTO() { }
-        public Role_OrganizationDTO(Organization Organization)
+        public List<Organization_AppUserDTO> AppUsers { get; set; }
+        public Organization_OrganizationDTO() { }
+        public Organization_OrganizationDTO(Organization Organization)
         {
             this.Id = Organization.Id;
             this.Code = Organization.Code;
@@ -34,15 +35,16 @@ namespace ELODIE.Rpc.role
             this.Phone = Organization.Phone;
             this.Address = Organization.Address;
             this.Email = Organization.Email;
-            this.Parent = Organization.Parent == null ? null : new Role_OrganizationDTO(Organization.Parent);
-            this.Status = Organization.Status == null ? null : new Role_StatusDTO(Organization.Status);
+            this.Parent = Organization.Parent == null ? null : new Organization_OrganizationDTO(Organization.Parent);
+            this.Status = Organization.Status == null ? null : new Organization_StatusDTO(Organization.Status);
 
-            this.AppUsers = Organization.AppUsers?.Select(x => new Role_AppUserDTO(x)).ToList();
+            this.AppUsers = Organization.AppUsers?.Select(x => new Organization_AppUserDTO(x)).ToList();
+            this.IsDisplay = Organization.IsDisplay;
             this.Errors = Organization.Errors;
         }
     }
 
-    public class Role_OrganizationFilterDTO : FilterDTO
+    public class Organization_OrganizationFilterDTO : FilterDTO
     {
         public IdFilter Id { get; set; }
         public StringFilter Code { get; set; }

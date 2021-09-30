@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "6eN6j5fvBQrUZmYsGv9+J8PiGRRuCkI78bpKzGMHkspQ+Zke+ZqOechiwywajM0NYYkZ8l2hKDoxlkYzJpPqRg==",
+  "dgSpecHash": "191za2QP+/n3zHkDBqWvuzDuOOECPH+L2nXTufe5SjD0hk0exeuTLu3Cs3Oo+dwykwRw9k4oTCzcYDCOiQ1jEw==",
   "success": true,
   "projectFilePath": "I:\\Project\\RĐ\\ELODIE.BE\\ELODIE\\ELODIE.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\admin\\.nuget\\packages\\caseextensions\\1.1.0\\caseextensions.1.1.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\dnsclient\\1.4.0\\dnsclient.1.4.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\entityframeworkcore.scaffolding.handlebars\\3.8.4\\entityframeworkcore.scaffolding.handlebars.3.8.4.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\epplus\\5.4.0\\epplus.5.4.0.nupkg.sha512",

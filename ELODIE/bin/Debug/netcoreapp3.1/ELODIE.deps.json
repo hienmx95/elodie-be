@@ -31,6 +31,7 @@
     ".NETCoreApp,Version=v3.1": {
       "ELODIE/1.0.0": {
         "dependencies": {
+          "CaseExtensions": "1.1.0",
           "EPPlus": "5.4.0",
           "EntityFrameworkCore.Scaffolding.Handlebars": "3.8.4",
           "GeoCoordinate.NetCore": "1.0.0.1",
@@ -322,6 +323,17 @@
         },
         "compile": {
           "ELODIE.dll": {}
+        }
+      },
+      "CaseExtensions/1.1.0": {
+        "runtime": {
+          "lib/netstandard2.0/CaseExtensions.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/CaseExtensions.dll": {}
         }
       },
       "DnsClient/1.4.0": {
@@ -4647,6 +4659,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "CaseExtensions/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zEvNeodNmNai8aQ4YfhHKCTWmlMwXM8NHR+8x8WsgY5eT4eDW0yFGrO+voQ1lCzyAXJ1Djv6dUAiyraVTueapA==",
+      "path": "caseextensions/1.1.0",
+      "hashPath": "caseextensions.1.1.0.nupkg.sha512"
     },
     "DnsClient/1.4.0": {
       "type": "package",

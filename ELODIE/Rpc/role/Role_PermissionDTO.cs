@@ -14,6 +14,7 @@ namespace ELODIE.Rpc.role
         public long MenuId { get; set; }
         public long StatusId { get; set; }
         public Role_MenuDTO Menu { get; set; }
+        public Role_StatusDTO Status { get; set; }
         public List<Role_PermissionContentDTO> PermissionContents { get; set; }
         public List<Role_PermissionActionMappingDTO> PermissionActionMappings { get; set; }
         public Role_PermissionDTO() { }
@@ -26,6 +27,7 @@ namespace ELODIE.Rpc.role
             this.MenuId = Permission.MenuId;
             this.StatusId = Permission.StatusId;
             this.Menu = Permission.Menu == null ? null : new Role_MenuDTO(Permission.Menu);
+            this.Status = Permission.Status == null ? null : new Role_StatusDTO(Permission.Status);
             this.PermissionContents = Permission.PermissionContents?.Select(x => new Role_PermissionContentDTO(x)).ToList();
             this.PermissionActionMappings = Permission.PermissionActionMappings?.Select(x => new Role_PermissionActionMappingDTO(x)).ToList();
             this.Errors = Permission.Errors;

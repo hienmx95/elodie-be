@@ -63,6 +63,8 @@ namespace ELODIE.Entities
         public List<AppUserFilter> OrFilter { get; set; }
         public AppUserOrder OrderBy { get; set; }
         public AppUserSelect Selects { get; set; }
+        public string Search { get; set; }
+        public long? OrganizationTreeFilterType { get; set; }
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

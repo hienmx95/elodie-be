@@ -178,6 +178,26 @@ namespace ELODIE.Rpc.role
                 return BadRequest(Role_RoleDTO);
         }
 
+        [Route(RoleRoute.BulkDelete), HttpPost]
+        public async Task<ActionResult<bool>> BulkDelete([FromBody] List<long> Ids)
+        {
+            if (!ModelState.IsValid)
+                throw new BindException(ModelState);
+
+            RoleFilter RoleFilter = new RoleFilter();
+            RoleFilter = RoleService.ToFilter(RoleFilter);
+            RoleFilter.Id = new IdFilter { In = Ids };
+            RoleFilter.Selects = RoleSelect.Id;
+            RoleFilter.Skip = 0;
+            RoleFilter.Take = int.MaxValue;
+
+            List<Role> Roles = await RoleService.List(RoleFilter);
+            Roles = await RoleService.BulkDelete(Roles);
+            if (Roles.Any(x => !x.IsValidated))
+                return BadRequest(Roles.Where(x => !x.IsValidated));
+            return true;
+        }
+
         [Route(RoleRoute.AssignAppUser), HttpPost]
         public async Task<ActionResult<Role_RoleDTO>> AssignAppUser([FromBody] Role_RoleDTO Role_RoleDTO)
         {
@@ -244,6 +264,8 @@ namespace ELODIE.Rpc.role
             RoleFilter.Code = Role_RoleFilterDTO.Code;
             RoleFilter.Name = Role_RoleFilterDTO.Name;
             RoleFilter.StatusId = Role_RoleFilterDTO.StatusId;
+            //RoleFilter.Search = Role_RoleFilterDTO.Search;
+
             return RoleFilter;
         }
 

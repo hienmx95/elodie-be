@@ -37,5 +37,6 @@ namespace ELODIE.Rpc.role
         public StringFilter Name { get; set; }
         public IdFilter StatusId { get; set; }
         public RoleOrder OrderBy { get; set; }
+        public string Search { get; set; }
     }
 }

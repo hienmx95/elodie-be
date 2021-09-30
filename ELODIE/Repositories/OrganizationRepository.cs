@@ -1,12 +1,14 @@
 using ELODIE.Common;
 using ELODIE.Entities;
+using ELODIE.Helpers;
 using ELODIE.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ELODIE.Helpers;
+using Thinktecture.EntityFrameworkCore.TempTables;
+using Thinktecture;
 
 namespace ELODIE.Repositories
 {
@@ -14,8 +16,10 @@ namespace ELODIE.Repositories
     {
         Task<int> Count(OrganizationFilter OrganizationFilter);
         Task<List<Organization>> List(OrganizationFilter OrganizationFilter);
+        Task<List<Organization>> List(List<long> Ids);
         Task<Organization> Get(long Id);
         Task<bool> BulkMerge(List<Organization> Organizations);
+        Task<bool> UpdateIsDisplay(Organization Organization);
     }
     public class OrganizationRepository : IOrganizationRepository
     {
@@ -31,36 +35,81 @@ namespace ELODIE.Repositories
                 return query.Where(q => false);
             query = query.Where(q => !q.DeletedAt.HasValue);
             if (filter.Id != null)
-                query = query.Where(q => q.Id, filter.Id);
-            if (filter.Code != null && filter.Code.HasValue)
             {
-                var queryCode = query.Where(q => q.Code, filter.Code);
-                var queryChildren = from q in query
-                                    from c in queryCode
-                                    where q.Path.StartsWith(c.Path)
-                                    select q;
-                var queryParent = from q in query
-                                  from c in queryCode
-                                  where c.Path.StartsWith(q.Path)
-                                  select q;
-                query = queryCode.Union(queryChildren).Union(queryParent).Distinct();
-
+                if (filter.Id.Equal != null)
+                {
+                    OrganizationDAO OrganizationDAO = DataContext.Organization
+                        .Where(o => o.Id == filter.Id.Equal.Value).FirstOrDefault();
+                    if (OrganizationDAO == null)
+                        return query.Where(q => false);
+                    else
+                        query = query.Where(q => q.Path.StartsWith(OrganizationDAO.Path));
+                }
+                if (filter.Id.NotEqual != null)
+                {
+                    OrganizationDAO OrganizationDAO = DataContext.Organization
+                        .Where(o => o.Id == filter.Id.NotEqual.Value).FirstOrDefault();
+                    if (OrganizationDAO == null)
+                        return query.Where(q => false);
+                    else
+                        query = query.Where(q => !q.Path.StartsWith(OrganizationDAO.Path));
+                }
+                if (filter.Id.In != null)
+                {
+                    List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                       .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                    List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => filter.Id.In.Contains(o.Id)).ToList();
+                    List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                    List<long> Ids = Branches.Select(o => o.Id).ToList();
+                    query = query.Where(q => Ids.Contains(q.Id));
+                }
+                if (filter.Id.NotIn != null)
+                {
+                    List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                       .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                    List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => filter.Id.NotIn.Contains(o.Id)).ToList();
+                    List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                    List<long> Ids = Branches.Select(o => o.Id).ToList();
+                    query = query.Where(q => !Ids.Contains(q.Id));
+                }
             }
-            if (filter.Name != null && filter.Name.HasValue)
-            {
-                var queryName = query.Where(q => q.Name, filter.Name);
-                var queryChildren = from q in query
-                                    from c in queryName
-                                    where q.Path.StartsWith(c.Path)
-                                    select q;
-                var queryParent = from q in query
-                                  from c in queryName
-                                  where c.Path.StartsWith(q.Path)
-                                  select q;
-                query = queryName.Union(queryChildren).Union(queryParent).Distinct();
-            }
+            if (filter.Code != null)
+                query = query.Where(q => q.Code, filter.Code);
+            if (filter.Name != null)
+                query = query.Where(q => q.Name, filter.Name);
             if (filter.ParentId != null)
-                query = query.Where(q => q.ParentId, filter.ParentId);
+            {
+                if (filter.ParentId.Equal != null)
+                {
+                    OrganizationDAO OrganizationDAO = DataContext.Organization
+                        .Where(o => o.Id == filter.ParentId.Equal.Value).FirstOrDefault();
+                    query = query.Where(q => q.Path.StartsWith(OrganizationDAO.Path));
+                }
+                if (filter.ParentId.NotEqual != null)
+                {
+                    OrganizationDAO OrganizationDAO = DataContext.Organization
+                        .Where(o => o.Id == filter.ParentId.NotEqual.Value).FirstOrDefault();
+                    query = query.Where(q => !q.Path.StartsWith(OrganizationDAO.Path));
+                }
+                if (filter.ParentId.In != null)
+                {
+                    List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                       .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                    List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => filter.ParentId.In.Contains(o.Id)).ToList();
+                    List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                    List<long> Ids = Branches.Select(o => o.Id).ToList();
+                    query = query.Where(q => q.ParentId.HasValue && Ids.Contains(q.ParentId.Value));
+                }
+                if (filter.ParentId.NotIn != null)
+                {
+                    List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                       .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                    List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => filter.ParentId.NotIn.Contains(o.Id)).ToList();
+                    List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                    List<long> Ids = Branches.Select(o => o.Id).ToList();
+                    query = query.Where(q => q.ParentId.HasValue && !Ids.Contains(q.ParentId.Value));
+                }
+            }
             if (filter.Path != null)
                 query = query.Where(q => q.Path, filter.Path);
             if (filter.Level != null)
@@ -69,10 +118,12 @@ namespace ELODIE.Repositories
                 query = query.Where(q => q.StatusId, filter.StatusId);
             if (filter.Phone != null)
                 query = query.Where(q => q.Phone, filter.Phone);
-            if (filter.Address != null)
-                query = query.Where(q => q.Address, filter.Address);
             if (filter.Email != null)
                 query = query.Where(q => q.Email, filter.Email);
+            if (filter.Address != null)
+                query = query.Where(q => q.Address, filter.Address);
+            if (filter.IsDisplay.HasValue)
+                query = query.Where(q => q.IsDisplay == filter.IsDisplay);
             query = OrFilter(query, filter);
             return query;
         }
@@ -86,13 +137,75 @@ namespace ELODIE.Repositories
             {
                 IQueryable<OrganizationDAO> queryable = query;
                 if (OrganizationFilter.Id != null)
-                    queryable = queryable.Where(q => q.Id, OrganizationFilter.Id);
+                {
+                    if (OrganizationFilter.Id.Equal != null)
+                    {
+                        OrganizationDAO OrganizationDAO = DataContext.Organization
+                            .Where(o => o.Id == OrganizationFilter.Id.Equal.Value).FirstOrDefault();
+                        queryable = queryable.Where(q => q.Path.StartsWith(OrganizationDAO.Path));
+                    }
+                    if (OrganizationFilter.Id.NotEqual != null)
+                    {
+                        OrganizationDAO OrganizationDAO = DataContext.Organization
+                            .Where(o => o.Id == OrganizationFilter.Id.NotEqual.Value).FirstOrDefault();
+                        queryable = queryable.Where(q => !q.Path.StartsWith(OrganizationDAO.Path));
+                    }
+                    if (OrganizationFilter.Id.In != null)
+                    {
+                        List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                           .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                        List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => OrganizationFilter.Id.In.Contains(o.Id)).ToList();
+                        List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                        List<long> Ids = Branches.Select(o => o.Id).ToList();
+                        queryable = queryable.Where(q => Ids.Contains(q.Id));
+                    }
+                    if (OrganizationFilter.Id.NotIn != null)
+                    {
+                        List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                           .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                        List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => OrganizationFilter.Id.NotIn.Contains(o.Id)).ToList();
+                        List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                        List<long> Ids = Branches.Select(o => o.Id).ToList();
+                        queryable = queryable.Where(q => !Ids.Contains(q.Id));
+                    }
+                }
                 if (OrganizationFilter.Code != null)
                     queryable = queryable.Where(q => q.Code, OrganizationFilter.Code);
                 if (OrganizationFilter.Name != null)
                     queryable = queryable.Where(q => q.Name, OrganizationFilter.Name);
                 if (OrganizationFilter.ParentId != null)
-                    queryable = queryable.Where(q => q.ParentId, OrganizationFilter.ParentId);
+                {
+                    if (OrganizationFilter.ParentId.Equal != null)
+                    {
+                        OrganizationDAO OrganizationDAO = DataContext.Organization
+                            .Where(o => o.Id == OrganizationFilter.ParentId.Equal.Value).FirstOrDefault();
+                        queryable = queryable.Where(q => q.Path.StartsWith(OrganizationDAO.Path));
+                    }
+                    if (OrganizationFilter.ParentId.NotEqual != null)
+                    {
+                        OrganizationDAO OrganizationDAO = DataContext.Organization
+                            .Where(o => o.Id == OrganizationFilter.ParentId.NotEqual.Value).FirstOrDefault();
+                        queryable = queryable.Where(q => !q.Path.StartsWith(OrganizationDAO.Path));
+                    }
+                    if (OrganizationFilter.ParentId.In != null)
+                    {
+                        List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                           .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                        List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => OrganizationFilter.Id.In.Contains(o.Id)).ToList();
+                        List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                        List<long> Ids = Branches.Select(o => o.Id).ToList();
+                        queryable = queryable.Where(q => q.ParentId.HasValue && Ids.Contains(q.ParentId.Value));
+                    }
+                    if (OrganizationFilter.ParentId.NotIn != null)
+                    {
+                        List<OrganizationDAO> OrganizationDAOs = DataContext.Organization
+                           .Where(o => o.DeletedAt == null && o.StatusId == 1).ToList();
+                        List<OrganizationDAO> Parents = OrganizationDAOs.Where(o => OrganizationFilter.ParentId.NotIn.Contains(o.Id)).ToList();
+                        List<OrganizationDAO> Branches = OrganizationDAOs.Where(o => Parents.Any(p => o.Path.StartsWith(p.Path))).ToList();
+                        List<long> Ids = Branches.Select(o => o.Id).ToList();
+                        queryable = queryable.Where(q => q.ParentId.HasValue && !Ids.Contains(q.ParentId.Value));
+                    }
+                }
                 if (OrganizationFilter.Path != null)
                     queryable = queryable.Where(q => q.Path, OrganizationFilter.Path);
                 if (OrganizationFilter.Level != null)
@@ -101,10 +214,10 @@ namespace ELODIE.Repositories
                     queryable = queryable.Where(q => q.StatusId, OrganizationFilter.StatusId);
                 if (OrganizationFilter.Phone != null)
                     queryable = queryable.Where(q => q.Phone, OrganizationFilter.Phone);
-                if (OrganizationFilter.Address != null)
-                    queryable = queryable.Where(q => q.Address, OrganizationFilter.Address);
                 if (OrganizationFilter.Email != null)
                     queryable = queryable.Where(q => q.Email, OrganizationFilter.Email);
+                if (OrganizationFilter.Address != null)
+                    queryable = queryable.Where(q => q.Address, OrganizationFilter.Address);
                 initQuery = initQuery.Union(queryable);
             }
             return initQuery;
@@ -203,6 +316,7 @@ namespace ELODIE.Repositories
                 Phone = filter.Selects.Contains(OrganizationSelect.Phone) ? q.Phone : default(string),
                 Address = filter.Selects.Contains(OrganizationSelect.Address) ? q.Address : default(string),
                 Email = filter.Selects.Contains(OrganizationSelect.Email) ? q.Email : default(string),
+                IsDisplay = filter.Selects.Contains(OrganizationSelect.IsDisplay) ? q.IsDisplay : default(bool),
                 Parent = filter.Selects.Contains(OrganizationSelect.Parent) && q.Parent != null ? new Organization
                 {
                     Id = q.Parent.Id,
@@ -214,8 +328,8 @@ namespace ELODIE.Repositories
                     StatusId = q.Parent.StatusId,
                     Phone = q.Parent.Phone,
                     Address = q.Parent.Address,
+                    IsDisplay = q.Parent.IsDisplay,
                     Email = q.Parent.Email,
-                    RowId = q.Parent.RowId,
                 } : null,
                 Status = filter.Selects.Contains(OrganizationSelect.Status) && q.Status != null ? new Status
                 {
@@ -223,11 +337,7 @@ namespace ELODIE.Repositories
                     Code = q.Status.Code,
                     Name = q.Status.Name,
                 } : null,
-                RowId = filter.Selects.Contains(OrganizationSelect.RowId) ? q.RowId : default(Guid),
-                Used = q.Used,
-                CreatedAt = q.CreatedAt,
-                UpdatedAt = q.UpdatedAt,
-                DeletedAt = q.DeletedAt,
+                RowId = filter.Selects.Contains(OrganizationSelect.RowId) ? q.RowId : default(Guid)
             }).ToListAsync();
             return Organizations;
         }
@@ -249,12 +359,86 @@ namespace ELODIE.Repositories
             return Organizations;
         }
 
+        public async Task<List<Organization>> List(List<long> Ids)
+        {
+            ITempTableQuery<TempTable<long>> tempTableQuery = await DataContext.BulkInsertValuesIntoTempTableAsync<long>(Ids);
+            var query = from x in DataContext.Organization
+                        join tt in tempTableQuery.Query on x.Id equals tt.Column1
+                        select x;
+            List<Organization> Organizations = await query
+                .Select(x => new Organization()
+                {
+                    CreatedAt = x.CreatedAt,
+                    UpdatedAt = x.UpdatedAt,
+                    DeletedAt = x.DeletedAt,
+                    Id = x.Id,
+                    Code = x.Code,
+                    Name = x.Name,
+                    ParentId = x.ParentId,
+                    Path = x.Path,
+                    Level = x.Level,
+                    StatusId = x.StatusId,
+                    Phone = x.Phone,
+                    Email = x.Email,
+                    Address = x.Address,
+                    RowId = x.RowId,
+                    Parent = x.Parent == null ? null : new Organization
+                    {
+                        Id = x.Parent.Id,
+                        Code = x.Parent.Code,
+                        Name = x.Parent.Name,
+                        ParentId = x.Parent.ParentId,
+                        Path = x.Parent.Path,
+                        Level = x.Parent.Level,
+                        StatusId = x.Parent.StatusId,
+                        Phone = x.Parent.Phone,
+                        Email = x.Parent.Email,
+                        Address = x.Parent.Address,
+                        RowId = x.Parent.RowId,
+                    },
+                    Status = x.Status == null ? null : new Status
+                    {
+                        Id = x.Status.Id,
+                        Code = x.Status.Code,
+                        Name = x.Status.Name,
+                    },
+                }).ToListAsync();
+
+            var AppUserQuery = from x in DataContext.AppUser
+                               join tt in tempTableQuery.Query on x.OrganizationId equals tt.Column1
+                               select x;
+            List<AppUser> AppUsers = AppUserQuery
+                .Select(x => new AppUser
+                {
+                    CreatedAt = x.CreatedAt,
+                    UpdatedAt = x.UpdatedAt,
+                    DeletedAt = x.DeletedAt,
+                    Id = x.Id,
+                    Username = x.Username,
+                    DisplayName = x.DisplayName,
+                    Address = x.Address,
+                    Email = x.Email,
+                    Phone = x.Phone,
+                    SexId = x.SexId,
+                    Birthday = x.Birthday,
+                    Avatar = x.Avatar,
+                    Department = x.Department,
+                    OrganizationId = x.OrganizationId,
+                    StatusId = x.StatusId,
+                    RowId = x.RowId,
+                }).ToList();
+            foreach (var Organization in Organizations)
+            {
+                Organization.AppUsers = AppUsers.Where(x => x.OrganizationId == Organization.Id).ToList();
+            }
+            return Organizations;
+        }
+
         public async Task<Organization> Get(long Id)
         {
             Organization Organization = await DataContext.Organization
                 .AsNoTracking()
-                .Where(x => x.Id == Id && x.DeletedAt == null)
-                .Select(x => new Organization()
+                .Where(x => x.Id == Id).Select(x => new Organization()
                 {
                     Id = x.Id,
                     Code = x.Code,
@@ -266,11 +450,7 @@ namespace ELODIE.Repositories
                     Phone = x.Phone,
                     Address = x.Address,
                     Email = x.Email,
-                    CreatedAt = x.CreatedAt,
-                    UpdatedAt = x.UpdatedAt,
-                    DeletedAt = x.DeletedAt,
-                    RowId = x.RowId,
-                    Used = x.Used,
+                    IsDisplay = x.IsDisplay,
                     Parent = x.Parent == null ? null : new Organization
                     {
                         Id = x.Parent.Id,
@@ -294,15 +474,57 @@ namespace ELODIE.Repositories
 
             if (Organization == null)
                 return null;
+            Organization.AppUsers = await DataContext.AppUser
+                .Where(x => x.OrganizationId == Organization.Id)
+                .Select(x => new AppUser
+                {
+                    Id = x.Id,
+                    Username = x.Username,
+                    DisplayName = x.DisplayName,
+                    Address = x.Address,
+                    Email = x.Email,
+                    Phone = x.Phone,
+                    Department = x.Department,
+                    OrganizationId = x.OrganizationId,
+                    SexId = x.SexId,
+                    StatusId = x.StatusId,
+                    Sex = new Sex
+                    {
+                        Id = x.Sex.Id,
+                        Code = x.Sex.Code,
+                        Name = x.Sex.Name,
+                    },
+                    Status = new Status
+                    {
+                        Id = x.Status.Id,
+                        Code = x.Status.Code,
+                        Name = x.Status.Name,
+                    },
+                }).ToListAsync();
+
             return Organization;
         }
 
+        public async Task<bool> UpdateIsDisplay(Organization Organization)
+        {
+            var Path = await DataContext.Organization.Where(x => x.Id == Organization.Id).Select(x => x.Path).FirstOrDefaultAsync();
+            if (!string.IsNullOrWhiteSpace(Path))
+            {
+                await DataContext.Organization.Where(x => x.Path.StartsWith(Path)).UpdateFromQueryAsync(x => new OrganizationDAO
+                {
+                    IsDisplay = Organization.IsDisplay,
+                    UpdatedAt = StaticParams.DateTimeNow
+                });
+            }
+            await DataContext.SaveChangesAsync();
+            return true;
+        }
         public async Task<bool> BulkMerge(List<Organization> Organizations)
         {
             var AppUsers = Organizations.Where(x => x.AppUsers != null).SelectMany(x => x.AppUsers).ToList();
             var AppUserIds = AppUsers.Select(x => x.Id).ToList();
-            var AppUserDAOs = await DataContext.AppUser.Where(x => AppUserIds.Contains(x.Id)).ToListAsync(); 
-            
+            var AppUserDAOs = await DataContext.AppUser.Where(x => AppUserIds.Contains(x.Id)).ToListAsync();
+
             List<OrganizationDAO> OrganizationDAOs = Organizations.Select(o => new OrganizationDAO
             {
                 Id = o.Id,
@@ -312,7 +534,6 @@ namespace ELODIE.Repositories
                 CreatedAt = o.CreatedAt,
                 UpdatedAt = o.UpdatedAt,
                 DeletedAt = o.DeletedAt,
-                Used = o.Used,
                 Email = o.Email,
                 Level = o.Level,
                 ParentId = o.ParentId,

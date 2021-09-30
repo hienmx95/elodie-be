@@ -15,6 +15,8 @@ namespace ELODIE.Rpc.role
             this.PermissionId = PermissionActionMapping.PermissionId;
             this.ActionId = PermissionActionMapping.ActionId;
             this.Action = PermissionActionMapping.Action == null ? null : new Role_ActionDTO(PermissionActionMapping.Action);
+
+            this.Errors = PermissionActionMapping.Errors;
         }
     }
 

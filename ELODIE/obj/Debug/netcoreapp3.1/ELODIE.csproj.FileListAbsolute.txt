@@ -233,3 +233,4 @@ I:\Project\RĐ\ELODIE.BE\ELODIE\obj\Debug\netcoreapp3.1\ELODIE.csproj.CopyComple
 I:\Project\RĐ\ELODIE.BE\ELODIE\obj\Debug\netcoreapp3.1\ELODIE.dll
 I:\Project\RĐ\ELODIE.BE\ELODIE\obj\Debug\netcoreapp3.1\ELODIE.pdb
 I:\Project\RĐ\ELODIE.BE\ELODIE\obj\Debug\netcoreapp3.1\ELODIE.genruntimeconfig.cache
+I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\CaseExtensions.dll

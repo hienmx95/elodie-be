@@ -2,6 +2,15 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v3.1": {
+      "CaseExtensions/1.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/CaseExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/CaseExtensions.dll": {}
+        }
+      },
       "DnsClient/1.4.0": {
         "type": "package",
         "compile": {
@@ -3447,6 +3456,21 @@
     }
   },
   "libraries": {
+    "CaseExtensions/1.1.0": {
+      "sha512": "zEvNeodNmNai8aQ4YfhHKCTWmlMwXM8NHR+8x8WsgY5eT4eDW0yFGrO+voQ1lCzyAXJ1Djv6dUAiyraVTueapA==",
+      "type": "package",
+      "path": "caseextensions/1.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "caseextensions.1.1.0.nupkg.sha512",
+        "caseextensions.nuspec",
+        "lib/net5.0/CaseExtensions.dll",
+        "lib/net5.0/CaseExtensions.runtimeconfig.json",
+        "lib/netstandard1.3/CaseExtensions.dll",
+        "lib/netstandard2.0/CaseExtensions.dll"
+      ]
+    },
     "DnsClient/1.4.0": {
       "sha512": "CO1NG1zQdV0nEAXmr/KppLZ0S1qkaPwV0kPX5YPgmYBtrBVh1XMYHM54IXy3RBJu1k4thFtpzwo4HNHqxiuFYw==",
       "type": "package",
@@ -10955,6 +10979,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "CaseExtensions >= 1.1.0",
       "EPPlus >= 5.4.0",
       "EntityFrameworkCore.Scaffolding.Handlebars >= 3.8.4",
       "GeoCoordinate.NetCore >= 1.0.0.1",
@@ -11020,6 +11045,10 @@
       "netcoreapp3.1": {
         "targetAlias": "netcoreapp3.1",
         "dependencies": {
+          "CaseExtensions": {
+            "target": "Package",
+            "version": "[1.1.0, )"
+          },
           "EPPlus": {
             "target": "Package",
             "version": "[5.4.0, )"

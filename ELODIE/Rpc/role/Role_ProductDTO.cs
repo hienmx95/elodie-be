@@ -7,6 +7,7 @@ namespace ELODIE.Rpc.role
     {
         public long Id { get; set; }
         public string Code { get; set; }
+        public string SupplierCode { get; set; }
         public string ERPCode { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -19,6 +20,7 @@ namespace ELODIE.Rpc.role
         {
             this.Id = Product.Id;
             this.Code = Product.Code;
+            //this.SupplierCode = Product.SupplierCode;
             this.ERPCode = Product.ERPCode;
             this.Name = Product.Name;
             this.Description = Product.Description;
@@ -33,6 +35,7 @@ namespace ELODIE.Rpc.role
     {
         public IdFilter Id { get; set; }
         public StringFilter Code { get; set; }
+        public StringFilter SupplierCode { get; set; }
         public StringFilter Name { get; set; }
         public StringFilter Description { get; set; }
         public StringFilter ScanCode { get; set; }

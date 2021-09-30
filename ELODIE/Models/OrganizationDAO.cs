@@ -28,6 +28,7 @@ namespace ELODIE.Models
         public DateTime? DeletedAt { get; set; }
         public Guid RowId { get; set; }
         public bool Used { get; set; }
+        public bool IsDisplay { get; set; }
 
         public virtual OrganizationDAO Parent { get; set; }
         public virtual StatusDAO Status { get; set; }
