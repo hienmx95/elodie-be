@@ -9,6 +9,8 @@ namespace ELODIE.Models
         {
             AppUserRoleMappings = new HashSet<AppUserRoleMappingDAO>();
             AppUserSiteMappings = new HashSet<AppUserSiteMappingDAO>();
+            CustomerAppUsers = new HashSet<CustomerDAO>();
+            CustomerCreators = new HashSet<CustomerDAO>();
             ItemHistories = new HashSet<ItemHistoryDAO>();
             RequestWorkflowHistories = new HashSet<RequestWorkflowHistoryDAO>();
             RequestWorkflowStepMappings = new HashSet<RequestWorkflowStepMappingDAO>();
@@ -25,9 +27,6 @@ namespace ELODIE.Models
         /// Tên đăng nhập
         /// </summary>
         public string Username { get; set; }
-        public string Password { get; set; }
-        public string OtpCode { get; set; }
-        public DateTime? OtpExpired { get; set; }
         /// <summary>
         /// Tên hiển thị
         /// </summary>
@@ -82,12 +81,17 @@ namespace ELODIE.Models
         /// </summary>
         public Guid RowId { get; set; }
         public bool Used { get; set; }
+        public string Password { get; set; }
+        public string OtpCode { get; set; }
+        public DateTime? OtpExpired { get; set; }
 
         public virtual OrganizationDAO Organization { get; set; }
         public virtual SexDAO Sex { get; set; }
         public virtual StatusDAO Status { get; set; }
         public virtual ICollection<AppUserRoleMappingDAO> AppUserRoleMappings { get; set; }
         public virtual ICollection<AppUserSiteMappingDAO> AppUserSiteMappings { get; set; }
+        public virtual ICollection<CustomerDAO> CustomerAppUsers { get; set; }
+        public virtual ICollection<CustomerDAO> CustomerCreators { get; set; }
         public virtual ICollection<ItemHistoryDAO> ItemHistories { get; set; }
         public virtual ICollection<RequestWorkflowHistoryDAO> RequestWorkflowHistories { get; set; }
         public virtual ICollection<RequestWorkflowStepMappingDAO> RequestWorkflowStepMappings { get; set; }

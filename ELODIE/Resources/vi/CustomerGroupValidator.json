@@ -1,0 +1,53 @@
+﻿{
+  "CustomerGroup": {
+    "Id": {
+    },
+    "Name": {
+      "NameEmpty": "Tên không được để trống",
+      "NameOverLength": "Độ dài tên không được vượt quá 500 ký tự"
+    },
+    "Code": {
+      "CodeEmpty": "Mã không được để trống",
+      "CodeExisted": "Mã đã tồn tại",
+      "CodeHasSpecialCharacter": "Mã có ký tự đặc biệt"
+    },
+    "TypeId": {
+      "TypeNotExisted": "Loại khách hàng không tồn tại",
+      "TypeRequired" :  "Phải chọn loại khách hàng"
+    },
+    "Path": {
+    },
+    "Level": {
+    },
+    "StatusId": {
+    },
+    "Color": {
+    },
+    "DisplayOrder": {
+    },
+    "Description": {
+    },
+    "ParentId": {
+    },
+    "Credit": {
+    },
+    "CreditGroupParent": {
+    },
+    "CreditGroupMember": {
+    },
+    "UpdatedAt": {
+    },
+    "DeletedAt": {
+    },
+    "CreatedAt": {
+    },
+    "Parent": {
+    },
+    "Status": {
+    },
+    "Customers": {
+    },
+    "InverseParent": {
+    }
+  }
+}

@@ -1,0 +1,45 @@
+﻿{
+  "Customer": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại"
+    },
+    "CustomerType": {
+      "CustomerTypeEmpty": "Chưa chọn loại khách hàng",
+      "CustomerTypeNotExisted": "Loại khách hàng không tồn tại"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên khách hàng",
+      "NameOverLength": "Tên khách hàng quá dài"
+    },
+    "Phone": {
+      "PhoneEmpty": "Chưa nhập số điện thoại",
+      "PhoneOverLength": "Số điện thoại quá dài",
+      "PhoneUsed": "Số điện thoại đã được sử dụng"
+    },
+    "CustomerPhones": {
+      "PhoneEmpty": "Chưa nhập số điện thoại",
+      "PhoneDuplicate": "Số điện thoại trùng lặp"
+    },
+    "CustomerPhone": {
+      "PhoneType": {
+        "PhoneTypeEmpty": "Chưa chọn loại thông tin liên lạc",
+        "PhoneTypeNotExisted": "Loại thông tin liên lạc không tồn tại"
+      }
+    },
+    "CustomerEmail": {
+      "EmailType": {
+        "EmailTypeEmpty": "Chưa chọn loại Email"
+      },
+      "Email": "Chưa nhập Email",
+      "EmailOverLength": "Email quá dài",
+      "EmailInvalid": "Email không hợp lệ"
+    },
+    "Company": {
+      "CompanyEmpty": "Chưa chọn công ty",
+      "CompanyNotExisted": "Công ty không tồn tại"
+    },
+    "Status": {
+      "StatusNotExisted": "Trạng thái không tồn tại"
+    }
+  }
+}

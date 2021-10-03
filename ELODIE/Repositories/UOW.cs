@@ -61,8 +61,11 @@ namespace ELODIE.Repositories
         IWorkflowStateRepository WorkflowStateRepository { get; }
         IWorkflowStepRepository WorkflowStepRepository { get; }
         IWorkflowTypeRepository WorkflowTypeRepository { get; }
-
         IRequestHistoryRepository RequestHistoryRepository { get; }
+        ICustomerRepository CustomerRepository { get; }
+        ICustomerGroupingRepository CustomerGroupingRepository { get; }
+        ICustomerSourceRepository CustomerSourceRepository { get; }
+        IProfessionRepository ProfessionRepository { get; }
     }
 
     public class UOW : IUOW
@@ -117,9 +120,11 @@ namespace ELODIE.Repositories
         public IWorkflowStateRepository WorkflowStateRepository { get; private set; }
         public IWorkflowStepRepository WorkflowStepRepository { get; private set; }
         public IWorkflowTypeRepository WorkflowTypeRepository { get; private set; }
-
         public IRequestHistoryRepository RequestHistoryRepository { get; private set; }
-
+        public ICustomerRepository CustomerRepository { get; private set; }
+        public ICustomerGroupingRepository CustomerGroupingRepository { get; private set; }
+        public ICustomerSourceRepository CustomerSourceRepository { get; private set; }
+        public IProfessionRepository ProfessionRepository { get; private set; }
         public UOW(DataContext DataContext, IConfiguration Configuration)
         {
             Repositories.RequestHistoryRepository.ConnectionString = Configuration["MongoConnection:ConnectionString"];
@@ -176,8 +181,11 @@ namespace ELODIE.Repositories
             WorkflowStateRepository = new WorkflowStateRepository(DataContext);
             WorkflowStepRepository = new WorkflowStepRepository(DataContext);
             WorkflowTypeRepository = new WorkflowTypeRepository(DataContext);
-
             RequestHistoryRepository = new RequestHistoryRepository(DataContext);
+            CustomerRepository = new CustomerRepository(DataContext);
+            CustomerGroupingRepository = new CustomerGroupingRepository(DataContext);
+            CustomerSourceRepository = new CustomerSourceRepository(DataContext);
+            ProfessionRepository = new ProfessionRepository(DataContext);
         }
         public async Task Begin()
         {

@@ -1,0 +1,33 @@
+﻿{
+  "CustomerSource": {
+    "Id": {
+    },
+    "Name": {
+      "NameEmpty": "Tên không được để trống",
+      "NameOverLength": "Độ dài tên không được vượt quá 500 ký tự"
+    },
+    "Code": {
+      "CodeEmpty": "Mã không được để trống",
+      "CodeExisted": "Mã đã tồn tại",
+      "CodeHasSpecialCharacter": "Mã có ký tự đặc biệt"
+    },
+    "Color": {
+    },
+    "StatusId": {
+    },
+    "DisplayOrder": {
+    },
+    "Description": {
+    },
+    "UpdatedAt": {
+    },
+    "DeletedAt": {
+    },
+    "CreatedAt": {
+    },
+    "Status": {
+    },
+    "Customers": {
+    }
+  }
+}

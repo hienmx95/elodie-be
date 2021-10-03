@@ -1,0 +1,29 @@
+﻿{
+  "Profession": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại"
+    },
+    "Code": {
+      "CodeExisted": "Mã nghề nghiệp đã tồn tại",
+      "CodeEmpty": "Chưa nhập mã nghề nghiệp",
+      "CodeOverLength": "Mã nghề nghiệp quá dài",
+      "CodeHasSpecialCharacter": "Mã nghề nghiệp không thể chứa khoảng trắng hoặc kí tự Tiếng Việt"
+    },
+    "Name": {
+      "NameEmpty": "Chưa nhập tên nghề nghiệp",
+      "NameOverLength": "Tên nghề nghiệp quá dài",
+      "NameExisted": "Tên nghề nghiệp đã tồn tại"
+    },
+    "Status": {
+      "StatusNotExisted": "Trạng thái không tồn tại"
+    },
+    "CreatedAt": {
+    },
+    "UpdatedAt": {
+    },
+    "DeletedAt": {
+    },
+    "Used": {
+    }
+  }
+}

@@ -19,6 +19,10 @@ namespace ELODIE.Models
         public virtual DbSet<CodeGeneratorRuleEntityComponentMappingDAO> CodeGeneratorRuleEntityComponentMapping { get; set; }
         public virtual DbSet<ColorDAO> Color { get; set; }
         public virtual DbSet<CounterDAO> Counter { get; set; }
+        public virtual DbSet<CustomerDAO> Customer { get; set; }
+        public virtual DbSet<CustomerCustomerGroupingMappingDAO> CustomerCustomerGroupingMapping { get; set; }
+        public virtual DbSet<CustomerGroupingDAO> CustomerGrouping { get; set; }
+        public virtual DbSet<CustomerSourceDAO> CustomerSource { get; set; }
         public virtual DbSet<DistrictDAO> District { get; set; }
         public virtual DbSet<EntityComponentDAO> EntityComponent { get; set; }
         public virtual DbSet<EntityTypeDAO> EntityType { get; set; }
@@ -48,6 +52,7 @@ namespace ELODIE.Models
         public virtual DbSet<ProductImageMappingDAO> ProductImageMapping { get; set; }
         public virtual DbSet<ProductProductGroupingMappingDAO> ProductProductGroupingMapping { get; set; }
         public virtual DbSet<ProductTypeDAO> ProductType { get; set; }
+        public virtual DbSet<ProfessionDAO> Profession { get; set; }
         public virtual DbSet<ProvinceDAO> Province { get; set; }
         public virtual DbSet<RequestStateDAO> RequestState { get; set; }
         public virtual DbSet<RequestWorkflowDefinitionMappingDAO> RequestWorkflowDefinitionMapping { get; set; }
@@ -95,7 +100,7 @@ namespace ELODIE.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("data source=192.168.20.200;initial catalog=MDM;persist security info=True;user id=sa;password=123@123a;multipleactiveresultsets=True;");
+                optionsBuilder.UseSqlServer("data source=127.0.0.1;initial catalog=ELODIE;persist security info=True;user id=sa;password=aA118ke0OLh;multipleactiveresultsets=True;");
             }
         }
 
@@ -191,15 +196,13 @@ namespace ELODIE.Models
                     .HasMaxLength(500)
                     .HasComment("Địa chỉ email");
 
+                entity.Property(e => e.OrganizationId).HasComment("Đơn vị công tác");
+
                 entity.Property(e => e.OtpCode).HasMaxLength(50);
 
                 entity.Property(e => e.OtpExpired).HasColumnType("datetime");
 
-                entity.Property(e => e.Password)
-                    //.IsRequired()
-                    .HasMaxLength(500);
-
-                entity.Property(e => e.OrganizationId).HasComment("Đơn vị công tác");
+                entity.Property(e => e.Password).HasMaxLength(500);
 
                 entity.Property(e => e.Phone)
                     .HasMaxLength(500)
@@ -449,6 +452,149 @@ namespace ELODIE.Models
                 entity.Property(e => e.Key)
                     .IsRequired()
                     .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<CustomerDAO>(entity =>
+            {
+                entity.ToTable("Customer", "CUSTOMER");
+
+                entity.Property(e => e.Address).HasMaxLength(4000);
+
+                entity.Property(e => e.Birthday).HasColumnType("datetime");
+
+                entity.Property(e => e.Code).HasMaxLength(500);
+
+                entity.Property(e => e.CodeDraft).HasMaxLength(500);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Email).HasMaxLength(200);
+
+                entity.Property(e => e.Name).HasMaxLength(400);
+
+                entity.Property(e => e.Phone).HasMaxLength(50);
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
+                entity.HasOne(d => d.AppUser)
+                    .WithMany(p => p.CustomerAppUsers)
+                    .HasForeignKey(d => d.AppUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Customer_AppUser");
+
+                entity.HasOne(d => d.CodeGeneratorRule)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.CodeGeneratorRuleId)
+                    .HasConstraintName("FK_Customer_CodeGeneratorRule");
+
+                entity.HasOne(d => d.Creator)
+                    .WithMany(p => p.CustomerCreators)
+                    .HasForeignKey(d => d.CreatorId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Customer_AppUser1");
+
+                entity.HasOne(d => d.CustomerSource)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.CustomerSourceId)
+                    .HasConstraintName("FK_Customer_CustomerSource");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_Customer_District");
+
+                entity.HasOne(d => d.Nation)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.NationId)
+                    .HasConstraintName("FK_Customer_Nation");
+
+                entity.HasOne(d => d.Organization)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.OrganizationId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Customer_Organization");
+
+                entity.HasOne(d => d.Profession)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.ProfessionId)
+                    .HasConstraintName("FK_Customer_Profession");
+
+                entity.HasOne(d => d.Province)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.ProvinceId)
+                    .HasConstraintName("FK_Customer_Province");
+
+                entity.HasOne(d => d.Ward)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.WardId)
+                    .HasConstraintName("FK_Customer_Ward");
+            });
+
+            modelBuilder.Entity<CustomerCustomerGroupingMappingDAO>(entity =>
+            {
+                entity.HasKey(e => new { e.CustomerId, e.CustomerGroupingId });
+
+                entity.ToTable("CustomerCustomerGroupingMapping", "CUSTOMER");
+
+                entity.HasOne(d => d.CustomerGrouping)
+                    .WithMany(p => p.CustomerCustomerGroupingMappings)
+                    .HasForeignKey(d => d.CustomerGroupingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerCustomerGroupingMapping_CustomerGrouping");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.CustomerCustomerGroupingMappings)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerCustomerGroupingMapping_Customer");
+            });
+
+            modelBuilder.Entity<CustomerGroupingDAO>(entity =>
+            {
+                entity.ToTable("CustomerGrouping", "MDM");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).HasMaxLength(2000);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Path)
+                    .IsRequired()
+                    .HasMaxLength(400);
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<CustomerSourceDAO>(entity =>
+            {
+                entity.ToTable("CustomerSource", "MDM");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).HasMaxLength(2000);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<DistrictDAO>(entity =>
@@ -1171,6 +1317,25 @@ namespace ELODIE.Models
                     .HasForeignKey(d => d.StatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ProductType_Status");
+            });
+
+            modelBuilder.Entity<ProfessionDAO>(entity =>
+            {
+                entity.ToTable("Profession", "MDM");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<ProvinceDAO>(entity =>

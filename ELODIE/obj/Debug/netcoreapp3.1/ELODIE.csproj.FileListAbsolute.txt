@@ -234,3 +234,7 @@ I:\Project\RĐ\ELODIE.BE\ELODIE\obj\Debug\netcoreapp3.1\ELODIE.dll
 I:\Project\RĐ\ELODIE.BE\ELODIE\obj\Debug\netcoreapp3.1\ELODIE.pdb
 I:\Project\RĐ\ELODIE.BE\ELODIE\obj\Debug\netcoreapp3.1\ELODIE.genruntimeconfig.cache
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\CaseExtensions.dll
+I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\CustomerGroupValidator.json
+I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\CustomerSourceValidator.json
+I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\CustomerValidator.json
+I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\ProfessionValidator.json

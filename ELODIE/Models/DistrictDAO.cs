@@ -7,6 +7,7 @@ namespace ELODIE.Models
     {
         public DistrictDAO()
         {
+            Customers = new HashSet<CustomerDAO>();
             Suppliers = new HashSet<SupplierDAO>();
             Wards = new HashSet<WardDAO>();
             Warehouses = new HashSet<WarehouseDAO>();
@@ -56,6 +57,7 @@ namespace ELODIE.Models
 
         public virtual ProvinceDAO Province { get; set; }
         public virtual StatusDAO Status { get; set; }
+        public virtual ICollection<CustomerDAO> Customers { get; set; }
         public virtual ICollection<SupplierDAO> Suppliers { get; set; }
         public virtual ICollection<WardDAO> Wards { get; set; }
         public virtual ICollection<WarehouseDAO> Warehouses { get; set; }
