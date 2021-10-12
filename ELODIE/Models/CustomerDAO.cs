@@ -45,6 +45,8 @@ namespace ELODIE.Models
         public virtual OrganizationDAO Organization { get; set; }
         public virtual ProfessionDAO Profession { get; set; }
         public virtual ProvinceDAO Province { get; set; }
+        public virtual SexDAO Sex { get; set; }
+        public virtual StatusDAO Status { get; set; }
         public virtual WardDAO Ward { get; set; }
         public virtual ICollection<CustomerCustomerGroupingMappingDAO> CustomerCustomerGroupingMappings { get; set; }
     }

@@ -19,6 +19,8 @@ using ELODIE.Services.MNation;
 using ELODIE.Services.MOrganization;
 using ELODIE.Services.MProfession;
 using ELODIE.Services.MProvince;
+using ELODIE.Services.MSex;
+using ELODIE.Services.MStatus;
 using ELODIE.Services.MWard;
 
 namespace ELODIE.Rpc.customer

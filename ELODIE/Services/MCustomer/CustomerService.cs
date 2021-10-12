@@ -95,15 +95,16 @@ namespace ELODIE.Services.MCustomer
                 Customer.Phone = Customer.Phone.Replace("+84", "0");
                 await UOW.CustomerRepository.Create(Customer);
                 Customer = await UOW.CustomerRepository.Get(Customer.Id);
-                CodeGeneratorRule CodeGeneratorRule = await GetCodeGeneratorRule();
-                if (CodeGeneratorRule == null)
-                {
-                    Customer.Code = $"KH{Customer.Id}";
-                }
-                else
-                {
-                    await CodeGenerator(new List<Customer> { Customer }, CodeGeneratorRule);
-                }
+                //CodeGeneratorRule CodeGeneratorRule = await GetCodeGeneratorRule();
+                Customer.Code = $"KH{Customer.Id}";
+                //if (CodeGeneratorRule == null)
+                //{
+                //    Customer.Code = $"KH{Customer.Id}";
+                //}
+                //else
+                //{
+                //    await CodeGenerator(new List<Customer> { Customer }, CodeGeneratorRule);
+                //}
                 await UOW.CustomerRepository.Update(Customer);
                 await Logging.CreateAuditLog(Customer, new { }, nameof(CustomerService));
                 return Customer;

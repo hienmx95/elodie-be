@@ -11,6 +11,7 @@ namespace ELODIE.Models
             Brands = new HashSet<BrandDAO>();
             Categories = new HashSet<CategoryDAO>();
             CodeGeneratorRules = new HashSet<CodeGeneratorRuleDAO>();
+            Customers = new HashSet<CustomerDAO>();
             Districts = new HashSet<DistrictDAO>();
             Items = new HashSet<ItemDAO>();
             Nations = new HashSet<NationDAO>();
@@ -40,6 +41,7 @@ namespace ELODIE.Models
         public virtual ICollection<BrandDAO> Brands { get; set; }
         public virtual ICollection<CategoryDAO> Categories { get; set; }
         public virtual ICollection<CodeGeneratorRuleDAO> CodeGeneratorRules { get; set; }
+        public virtual ICollection<CustomerDAO> Customers { get; set; }
         public virtual ICollection<DistrictDAO> Districts { get; set; }
         public virtual ICollection<ItemDAO> Items { get; set; }
         public virtual ICollection<NationDAO> Nations { get; set; }

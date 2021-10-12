@@ -392,6 +392,18 @@ namespace ELODIE.Repositories
                     RowId = q.Province.RowId,
                     Used = q.Province.Used,
                 } : null,
+                Sex = filter.Selects.Contains(CustomerSelect.Sex) && q.Sex != null ? new Sex
+                {
+                    Id = q.Sex.Id,
+                    Code = q.Sex.Code,
+                    Name = q.Sex.Name,
+                } : null,
+                Status = filter.Selects.Contains(CustomerSelect.Status) && q.Status != null ? new Status
+                {
+                    Id = q.Status.Id,
+                    Code = q.Status.Code,
+                    Name = q.Status.Name,
+                } : null,
                 Ward = filter.Selects.Contains(CustomerSelect.Ward) && q.Ward != null ? new Ward
                 {
                     Id = q.Ward.Id,
@@ -583,6 +595,18 @@ namespace ELODIE.Repositories
                     RowId = x.Province.RowId,
                     Used = x.Province.Used,
                 },
+                Sex = x.Sex == null ? null : new Sex
+                {
+                    Id = x.Sex.Id,
+                    Code = x.Sex.Code,
+                    Name = x.Sex.Name,
+                },
+                Status = x.Status == null ? null : new Status
+                {
+                    Id = x.Status.Id,
+                    Code = x.Status.Code,
+                    Name = x.Status.Name,
+                },
                 Ward = x.Ward == null ? null : new Ward
                 {
                     Id = x.Ward.Id,
@@ -745,6 +769,18 @@ namespace ELODIE.Repositories
                     StatusId = x.Province.StatusId,
                     RowId = x.Province.RowId,
                     Used = x.Province.Used,
+                },
+                Sex = x.Sex == null ? null : new Sex
+                {
+                    Id = x.Sex.Id,
+                    Code = x.Sex.Code,
+                    Name = x.Sex.Name,
+                },
+                Status = x.Status == null ? null : new Status
+                {
+                    Id = x.Status.Id,
+                    Code = x.Status.Code,
+                    Name = x.Status.Name,
                 },
                 Ward = x.Ward == null ? null : new Ward
                 {

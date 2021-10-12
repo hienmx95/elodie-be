@@ -19,6 +19,8 @@ using ELODIE.Services.MNation;
 using ELODIE.Services.MOrganization;
 using ELODIE.Services.MProfession;
 using ELODIE.Services.MProvince;
+using ELODIE.Services.MSex;
+using ELODIE.Services.MStatus;
 using ELODIE.Services.MWard;
 
 namespace ELODIE.Rpc.customer
@@ -45,10 +47,15 @@ namespace ELODIE.Rpc.customer
             AppUserFilter.Phone = Customer_AppUserFilterDTO.Phone;
             AppUserFilter.SexId = Customer_AppUserFilterDTO.SexId;
             AppUserFilter.Birthday = Customer_AppUserFilterDTO.Birthday;
+            AppUserFilter.Avatar = Customer_AppUserFilterDTO.Avatar;
             AppUserFilter.Department = Customer_AppUserFilterDTO.Department;
             AppUserFilter.OrganizationId = Customer_AppUserFilterDTO.OrganizationId;
             AppUserFilter.StatusId = Customer_AppUserFilterDTO.StatusId;
+            AppUserFilter.RowId = Customer_AppUserFilterDTO.RowId;
             AppUserFilter.Password = Customer_AppUserFilterDTO.Password;
+            AppUserFilter.OtpCode = Customer_AppUserFilterDTO.OtpCode;
+            AppUserFilter.OtpExpired = Customer_AppUserFilterDTO.OtpExpired;
+
             List<AppUser> AppUsers = await AppUserService.List(AppUserFilter);
             List<Customer_AppUserDTO> Customer_AppUserDTOs = AppUsers
                 .Select(x => new Customer_AppUserDTO(x)).ToList();
@@ -222,6 +229,48 @@ namespace ELODIE.Rpc.customer
             List<Customer_ProvinceDTO> Customer_ProvinceDTOs = Provinces
                 .Select(x => new Customer_ProvinceDTO(x)).ToList();
             return Customer_ProvinceDTOs;
+        }
+        [Route(CustomerRoute.FilterListSex), HttpPost]
+        public async Task<List<Customer_SexDTO>> FilterListSex([FromBody] Customer_SexFilterDTO Customer_SexFilterDTO)
+        {
+            if (!ModelState.IsValid)
+                throw new BindException(ModelState);
+
+            SexFilter SexFilter = new SexFilter();
+            SexFilter.Skip = 0;
+            SexFilter.Take = 20;
+            SexFilter.OrderBy = SexOrder.Id;
+            SexFilter.OrderType = OrderType.ASC;
+            SexFilter.Selects = SexSelect.ALL;
+            SexFilter.Id = Customer_SexFilterDTO.Id;
+            SexFilter.Code = Customer_SexFilterDTO.Code;
+            SexFilter.Name = Customer_SexFilterDTO.Name;
+
+            List<Sex> Sexes = await SexService.List(SexFilter);
+            List<Customer_SexDTO> Customer_SexDTOs = Sexes
+                .Select(x => new Customer_SexDTO(x)).ToList();
+            return Customer_SexDTOs;
+        }
+        [Route(CustomerRoute.FilterListStatus), HttpPost]
+        public async Task<List<Customer_StatusDTO>> FilterListStatus([FromBody] Customer_StatusFilterDTO Customer_StatusFilterDTO)
+        {
+            if (!ModelState.IsValid)
+                throw new BindException(ModelState);
+
+            StatusFilter StatusFilter = new StatusFilter();
+            StatusFilter.Skip = 0;
+            StatusFilter.Take = 20;
+            StatusFilter.OrderBy = StatusOrder.Id;
+            StatusFilter.OrderType = OrderType.ASC;
+            StatusFilter.Selects = StatusSelect.ALL;
+            StatusFilter.Id = Customer_StatusFilterDTO.Id;
+            StatusFilter.Code = Customer_StatusFilterDTO.Code;
+            StatusFilter.Name = Customer_StatusFilterDTO.Name;
+
+            List<Status> Statuses = await StatusService.List(StatusFilter);
+            List<Customer_StatusDTO> Customer_StatusDTOs = Statuses
+                .Select(x => new Customer_StatusDTO(x)).ToList();
+            return Customer_StatusDTOs;
         }
         [Route(CustomerRoute.FilterListWard), HttpPost]
         public async Task<List<Customer_WardDTO>> FilterListWard([FromBody] Customer_WardFilterDTO Customer_WardFilterDTO)

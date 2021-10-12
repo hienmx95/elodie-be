@@ -8,6 +8,7 @@ namespace ELODIE.Models
         public SexDAO()
         {
             AppUsers = new HashSet<AppUserDAO>();
+            Customers = new HashSet<CustomerDAO>();
         }
 
         public long Id { get; set; }
@@ -15,5 +16,6 @@ namespace ELODIE.Models
         public string Name { get; set; }
 
         public virtual ICollection<AppUserDAO> AppUsers { get; set; }
+        public virtual ICollection<CustomerDAO> Customers { get; set; }
     }
 }

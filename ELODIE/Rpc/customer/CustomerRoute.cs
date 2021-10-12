@@ -19,6 +19,8 @@ using ELODIE.Services.MNation;
 using ELODIE.Services.MOrganization;
 using ELODIE.Services.MProfession;
 using ELODIE.Services.MProvince;
+using ELODIE.Services.MSex;
+using ELODIE.Services.MStatus;
 using ELODIE.Services.MWard;
 
 namespace ELODIE.Rpc.customer
@@ -49,6 +51,8 @@ namespace ELODIE.Rpc.customer
         public const string FilterListOrganization = Default + "/filter-list-organization";
         public const string FilterListProfession = Default + "/filter-list-profession";
         public const string FilterListProvince = Default + "/filter-list-province";
+        public const string FilterListSex = Default + "/filter-list-sex";
+        public const string FilterListStatus = Default + "/filter-list-status";
         public const string FilterListWard = Default + "/filter-list-ward";
 
         public const string SingleListAppUser = Default + "/single-list-app-user";
@@ -59,6 +63,8 @@ namespace ELODIE.Rpc.customer
         public const string SingleListOrganization = Default + "/single-list-organization";
         public const string SingleListProfession = Default + "/single-list-profession";
         public const string SingleListProvince = Default + "/single-list-province";
+        public const string SingleListSex = Default + "/single-list-sex";
+        public const string SingleListStatus = Default + "/single-list-status";
         public const string SingleListWard = Default + "/single-list-ward";
 
 
@@ -88,10 +94,10 @@ namespace ELODIE.Rpc.customer
         };
 
         private static List<string> FilterList = new List<string> { 
-            FilterListAppUser,FilterListCodeGeneratorRule,FilterListCustomerSource,FilterListDistrict,FilterListNation,FilterListOrganization,FilterListProfession,FilterListProvince,FilterListWard,
+            FilterListAppUser,FilterListCodeGeneratorRule,FilterListCustomerSource,FilterListDistrict,FilterListNation,FilterListOrganization,FilterListProfession,FilterListProvince,FilterListSex,FilterListStatus,FilterListWard,
         };
         private static List<string> SingleList = new List<string> { 
-            SingleListAppUser, SingleListCodeGeneratorRule, SingleListCustomerSource, SingleListDistrict, SingleListNation, SingleListOrganization, SingleListProfession, SingleListProvince, SingleListWard, 
+            SingleListAppUser, SingleListCodeGeneratorRule, SingleListCustomerSource, SingleListDistrict, SingleListNation, SingleListOrganization, SingleListProfession, SingleListProvince, SingleListSex, SingleListStatus, SingleListWard, 
         };
         private static List<string> CountList = new List<string> { 
             

@@ -20,6 +20,8 @@ using ELODIE.Services.MNation;
 using ELODIE.Services.MOrganization;
 using ELODIE.Services.MProfession;
 using ELODIE.Services.MProvince;
+using ELODIE.Services.MSex;
+using ELODIE.Services.MStatus;
 using ELODIE.Services.MWard;
 
 namespace ELODIE.Rpc.customer
@@ -34,6 +36,8 @@ namespace ELODIE.Rpc.customer
         private IOrganizationService OrganizationService;
         private IProfessionService ProfessionService;
         private IProvinceService ProvinceService;
+        private ISexService SexService;
+        private IStatusService StatusService;
         private IWardService WardService;
         private ICustomerService CustomerService;
         private ICurrentContext CurrentContext;
@@ -46,6 +50,8 @@ namespace ELODIE.Rpc.customer
             IOrganizationService OrganizationService,
             IProfessionService ProfessionService,
             IProvinceService ProvinceService,
+            ISexService SexService,
+            IStatusService StatusService,
             IWardService WardService,
             ICustomerService CustomerService,
             ICurrentContext CurrentContext
@@ -59,6 +65,8 @@ namespace ELODIE.Rpc.customer
             this.OrganizationService = OrganizationService;
             this.ProfessionService = ProfessionService;
             this.ProvinceService = ProvinceService;
+            this.SexService = SexService;
+            this.StatusService = StatusService;
             this.WardService = WardService;
             this.CustomerService = CustomerService;
             this.CurrentContext = CurrentContext;
@@ -238,6 +246,20 @@ namespace ELODIE.Rpc.customer
                 Selects = ProvinceSelect.ALL
             };
             List<Province> Provinces = await ProvinceService.List(ProvinceFilter);
+            SexFilter SexFilter = new SexFilter
+            {
+                Skip = 0,
+                Take = int.MaxValue,
+                Selects = SexSelect.ALL
+            };
+            List<Sex> Sexes = await SexService.List(SexFilter);
+            StatusFilter StatusFilter = new StatusFilter
+            {
+                Skip = 0,
+                Take = int.MaxValue,
+                Selects = StatusSelect.ALL
+            };
+            List<Status> Statuses = await StatusService.List(StatusFilter);
             WardFilter WardFilter = new WardFilter
             {
                 Skip = 0,
@@ -335,6 +357,12 @@ namespace ELODIE.Rpc.customer
                     Province Province = Provinces.Where(x => x.Id.ToString() == ProvinceIdValue).FirstOrDefault();
                     Customer.ProvinceId = Province == null ? 0 : Province.Id;
                     Customer.Province = Province;
+                    Sex Sex = Sexes.Where(x => x.Id.ToString() == SexIdValue).FirstOrDefault();
+                    Customer.SexId = Sex == null ? 0 : Sex.Id;
+                    Customer.Sex = Sex;
+                    Status Status = Statuses.Where(x => x.Id.ToString() == StatusIdValue).FirstOrDefault();
+                    Customer.StatusId = Status == null ? 0 : Status.Id;
+                    Customer.Status = Status;
                     Ward Ward = Wards.Where(x => x.Id.ToString() == WardIdValue).FirstOrDefault();
                     Customer.WardId = Ward == null ? 0 : Ward.Id;
                     Customer.Ward = Ward;
@@ -815,6 +843,66 @@ namespace ELODIE.Rpc.customer
                 }
                 excel.GenerateWorksheet("Province", ProvinceHeaders, ProvinceData);
                 #endregion
+                #region Sex
+                var SexFilter = new SexFilter();
+                SexFilter.Selects = SexSelect.ALL;
+                SexFilter.OrderBy = SexOrder.Id;
+                SexFilter.OrderType = OrderType.ASC;
+                SexFilter.Skip = 0;
+                SexFilter.Take = int.MaxValue;
+                List<Sex> Sexes = await SexService.List(SexFilter);
+
+                var SexHeaders = new List<string[]>()
+                {
+                    new string[] { 
+                        "Id",
+                        "Code",
+                        "Name",
+                    }
+                };
+                List<object[]> SexData = new List<object[]>();
+                for (int i = 0; i < Sexes.Count; i++)
+                {
+                    var Sex = Sexes[i];
+                    SexData.Add(new Object[]
+                    {
+                        Sex.Id,
+                        Sex.Code,
+                        Sex.Name,
+                    });
+                }
+                excel.GenerateWorksheet("Sex", SexHeaders, SexData);
+                #endregion
+                #region Status
+                var StatusFilter = new StatusFilter();
+                StatusFilter.Selects = StatusSelect.ALL;
+                StatusFilter.OrderBy = StatusOrder.Id;
+                StatusFilter.OrderType = OrderType.ASC;
+                StatusFilter.Skip = 0;
+                StatusFilter.Take = int.MaxValue;
+                List<Status> Statuses = await StatusService.List(StatusFilter);
+
+                var StatusHeaders = new List<string[]>()
+                {
+                    new string[] { 
+                        "Id",
+                        "Code",
+                        "Name",
+                    }
+                };
+                List<object[]> StatusData = new List<object[]>();
+                for (int i = 0; i < Statuses.Count; i++)
+                {
+                    var Status = Statuses[i];
+                    StatusData.Add(new Object[]
+                    {
+                        Status.Id,
+                        Status.Code,
+                        Status.Name,
+                    });
+                }
+                excel.GenerateWorksheet("Status", StatusHeaders, StatusData);
+                #endregion
                 #region Ward
                 var WardFilter = new WardFilter();
                 WardFilter.Selects = WardSelect.ALL;
@@ -1035,6 +1123,18 @@ namespace ELODIE.Rpc.customer
                 StatusId = Customer_CustomerDTO.Province.StatusId,
                 RowId = Customer_CustomerDTO.Province.RowId,
                 Used = Customer_CustomerDTO.Province.Used,
+            };
+            Customer.Sex = Customer_CustomerDTO.Sex == null ? null : new Sex
+            {
+                Id = Customer_CustomerDTO.Sex.Id,
+                Code = Customer_CustomerDTO.Sex.Code,
+                Name = Customer_CustomerDTO.Sex.Name,
+            };
+            Customer.Status = Customer_CustomerDTO.Status == null ? null : new Status
+            {
+                Id = Customer_CustomerDTO.Status.Id,
+                Code = Customer_CustomerDTO.Status.Code,
+                Name = Customer_CustomerDTO.Status.Name,
             };
             Customer.Ward = Customer_CustomerDTO.Ward == null ? null : new Ward
             {

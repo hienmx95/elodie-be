@@ -39,6 +39,8 @@ namespace ELODIE.Rpc.customer
         public Customer_OrganizationDTO Organization { get; set; }
         public Customer_ProfessionDTO Profession { get; set; }
         public Customer_ProvinceDTO Province { get; set; }
+        public Customer_SexDTO Sex { get; set; }
+        public Customer_StatusDTO Status { get; set; }
         public Customer_WardDTO Ward { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -76,6 +78,8 @@ namespace ELODIE.Rpc.customer
             this.Organization = Customer.Organization == null ? null : new Customer_OrganizationDTO(Customer.Organization);
             this.Profession = Customer.Profession == null ? null : new Customer_ProfessionDTO(Customer.Profession);
             this.Province = Customer.Province == null ? null : new Customer_ProvinceDTO(Customer.Province);
+            this.Sex = Customer.Sex == null ? null : new Customer_SexDTO(Customer.Sex);
+            this.Status = Customer.Status == null ? null : new Customer_StatusDTO(Customer.Status);
             this.Ward = Customer.Ward == null ? null : new Customer_WardDTO(Customer.Ward);
             this.CreatedAt = Customer.CreatedAt;
             this.UpdatedAt = Customer.UpdatedAt;

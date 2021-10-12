@@ -526,6 +526,17 @@ namespace ELODIE.Models
                     .HasForeignKey(d => d.ProvinceId)
                     .HasConstraintName("FK_Customer_Province");
 
+                entity.HasOne(d => d.Sex)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.SexId)
+                    .HasConstraintName("FK_Customer_Sex");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.Customers)
+                    .HasForeignKey(d => d.StatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Customer_Status");
+
                 entity.HasOne(d => d.Ward)
                     .WithMany(p => p.Customers)
                     .HasForeignKey(d => d.WardId)

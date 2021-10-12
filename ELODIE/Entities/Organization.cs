@@ -50,7 +50,7 @@ namespace ELODIE.Entities
         public StringFilter Phone { get; set; }
         public StringFilter Email { get; set; }
         public StringFilter Address { get; set; }
-        public bool? IsDisplay { get; set; }
+        public bool IsDisplay { get; set; }
         public List<OrganizationFilter> OrFilter { get; set; }
         public OrganizationOrder OrderBy { get; set; }
         public OrganizationSelect Selects { get; set; }

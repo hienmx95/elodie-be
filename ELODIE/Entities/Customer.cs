@@ -30,6 +30,7 @@ namespace ELODIE.Entities
         public bool Used { get; set; }
         public Guid RowId { get; set; }
         public long? CodeGeneratorRuleId { get; set; }
+        public List<CustomerCustomerGroupingMapping> CustomerCustomerGroupingMappings { get; set; }
         public AppUser AppUser { get; set; }
         public CodeGeneratorRule CodeGeneratorRule { get; set; }
         public AppUser Creator { get; set; }
@@ -39,8 +40,9 @@ namespace ELODIE.Entities
         public Organization Organization { get; set; }
         public Profession Profession { get; set; }
         public Province Province { get; set; }
+        public Sex Sex { get; set; }
+        public Status Status { get; set; }
         public Ward Ward { get; set; }
-        public List<CustomerCustomerGroupingMapping> CustomerCustomerGroupingMappings { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }

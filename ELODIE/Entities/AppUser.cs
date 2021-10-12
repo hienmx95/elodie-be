@@ -60,6 +60,10 @@ namespace ELODIE.Entities
         public IdFilter StatusId { get; set; }
         public DateFilter Birthday { get; set; }
         public IdFilter RoleId { get; set; }
+        public StringFilter Avatar { get; set; }
+        public GuidFilter RowId { get; set; }
+        public StringFilter OtpCode { get; set; }
+        public DateFilter OtpExpired { get; set; }
         public List<AppUserFilter> OrFilter { get; set; }
         public AppUserOrder OrderBy { get; set; }
         public AppUserSelect Selects { get; set; }
