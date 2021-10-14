@@ -30,7 +30,6 @@ namespace ELODIE.Entities
         public bool Used { get; set; }
         public Guid RowId { get; set; }
         public long? CodeGeneratorRuleId { get; set; }
-        public List<CustomerCustomerGroupingMapping> CustomerCustomerGroupingMappings { get; set; }
         public AppUser AppUser { get; set; }
         public CodeGeneratorRule CodeGeneratorRule { get; set; }
         public AppUser Creator { get; set; }
@@ -43,6 +42,7 @@ namespace ELODIE.Entities
         public Sex Sex { get; set; }
         public Status Status { get; set; }
         public Ward Ward { get; set; }
+        public List<CustomerCustomerGroupingMapping> CustomerCustomerGroupingMappings { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
@@ -72,6 +72,21 @@ namespace ELODIE.Entities
             if (this.Used != other.Used) return false;
             if (this.RowId != other.RowId) return false;
             if (this.CodeGeneratorRuleId != other.CodeGeneratorRuleId) return false;
+            if (this.CustomerCustomerGroupingMappings?.Count != other.CustomerCustomerGroupingMappings?.Count) return false;
+            else if (this.CustomerCustomerGroupingMappings != null && other.CustomerCustomerGroupingMappings != null)
+            {
+                for (int i = 0; i < CustomerCustomerGroupingMappings.Count; i++)
+                {
+                    CustomerCustomerGroupingMapping CustomerCustomerGroupingMapping = CustomerCustomerGroupingMappings[i];
+                    CustomerCustomerGroupingMapping otherCustomerCustomerGroupingMapping = other.CustomerCustomerGroupingMappings[i];
+                    if (CustomerCustomerGroupingMapping == null && otherCustomerCustomerGroupingMapping != null)
+                        return false;
+                    if (CustomerCustomerGroupingMapping != null && otherCustomerCustomerGroupingMapping == null)
+                        return false;
+                    if (CustomerCustomerGroupingMapping.Equals(otherCustomerCustomerGroupingMapping) == false)
+                        return false;
+                }
+            }
             return true;
         }
         public override int GetHashCode()

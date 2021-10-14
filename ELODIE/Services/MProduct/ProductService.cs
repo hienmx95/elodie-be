@@ -200,7 +200,7 @@ namespace ELODIE.Services.MProduct
                 Product = (await UOW.ProductRepository.List(new List<long> { Product.Id })).FirstOrDefault();
                 Sync(new List<Product> { Product });
 
-                await CreateHistory(Product, "Tạo mới");
+                //await CreateHistory(Product, "Tạo mới");
 
                 await Logging.CreateAuditLog(Product, new { }, nameof(ProductService));
                 return Product;
@@ -320,18 +320,19 @@ namespace ELODIE.Services.MProduct
             {
                 var oldData = await UOW.ProductRepository.Get(Product.Id);
                 var oldProductCode = Product.Code;
-                if (Product.CodeGeneratorRuleId != null && Product.CodeGeneratorRuleId.HasValue)
-                {
-                    var codeRule = await UOW.CodeGeneratorRuleRepository.Get(Product.CodeGeneratorRuleId.Value);
-                    if (codeRule != null)
-                    {
-                        await CodeGenerator(new List<Product> { Product }, codeRule);
-                    }
-                } // nếu có codeRule thì áp dụng lại codeRule cũ
-                else
-                {
-                    oldProductCode = oldData.Code;
-                } // nếu không có codeRule thì lấy dữ liệu cũ để replace 
+                oldProductCode = oldData.Code;
+                //if (Product.CodeGeneratorRuleId != null && Product.CodeGeneratorRuleId.HasValue)
+                //{
+                //    var codeRule = await UOW.CodeGeneratorRuleRepository.Get(Product.CodeGeneratorRuleId.Value);
+                //    if (codeRule != null)
+                //    {
+                //        await CodeGenerator(new List<Product> { Product }, codeRule);
+                //    }
+                //} // nếu có codeRule thì áp dụng lại codeRule cũ
+                //else
+                //{
+                //    oldProductCode = oldData.Code;
+                //} // nếu không có codeRule thì lấy dữ liệu cũ để replace 
                 Product.IsNew = oldData.IsNew;
                 var Items = Product.Items;
                 var OldItems = oldData.Items;
@@ -410,10 +411,10 @@ namespace ELODIE.Services.MProduct
                 Product = (await UOW.ProductRepository.List(new List<long> { Product.Id })).FirstOrDefault();
                 Sync(new List<Product> { Product });
 
-                if (!oldData.Equals(Product))
-                {
-                    await CreateHistory(Product, "Cập nhật");
-                }
+                //if (!oldData.Equals(Product))
+                //{
+                //    await CreateHistory(Product, "Cập nhật");
+                //}
 
                 await Logging.CreateAuditLog(Product, oldData, nameof(ProductService));
                 return Product;

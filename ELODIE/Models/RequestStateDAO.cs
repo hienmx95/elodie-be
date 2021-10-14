@@ -7,6 +7,7 @@ namespace ELODIE.Models
     {
         public RequestStateDAO()
         {
+            CustomerSalesOrders = new HashSet<CustomerSalesOrderDAO>();
             RequestWorkflowDefinitionMappings = new HashSet<RequestWorkflowDefinitionMappingDAO>();
         }
 
@@ -14,6 +15,7 @@ namespace ELODIE.Models
         public string Code { get; set; }
         public string Name { get; set; }
 
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrders { get; set; }
         public virtual ICollection<RequestWorkflowDefinitionMappingDAO> RequestWorkflowDefinitionMappings { get; set; }
     }
 }

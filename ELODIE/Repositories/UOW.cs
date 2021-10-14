@@ -66,6 +66,13 @@ namespace ELODIE.Repositories
         ICustomerGroupingRepository CustomerGroupingRepository { get; }
         ICustomerSourceRepository CustomerSourceRepository { get; }
         IProfessionRepository ProfessionRepository { get; }
+        ICustomerSalesOrderContentRepository CustomerSalesOrderContentRepository { get; }
+        ICustomerSalesOrderRepository CustomerSalesOrderRepository { get; }
+        ICustomerSalesOrderPaymentHistoryRepository CustomerSalesOrderPaymentHistoryRepository { get; }
+        IEditedPriceStatusRepository EditedPriceStatusRepository { get; }
+        IOrderPaymentStatusRepository OrderPaymentStatusRepository { get; }
+        IOrderSourceRepository OrderSourceRepository { get; }
+        IPaymentTypeRepository PaymentTypeRepository { get; }
     }
 
     public class UOW : IUOW
@@ -125,6 +132,13 @@ namespace ELODIE.Repositories
         public ICustomerGroupingRepository CustomerGroupingRepository { get; private set; }
         public ICustomerSourceRepository CustomerSourceRepository { get; private set; }
         public IProfessionRepository ProfessionRepository { get; private set; }
+        public ICustomerSalesOrderContentRepository CustomerSalesOrderContentRepository { get; private set; }
+        public ICustomerSalesOrderRepository CustomerSalesOrderRepository { get; private set; }
+        public ICustomerSalesOrderPaymentHistoryRepository CustomerSalesOrderPaymentHistoryRepository { get; private set; }
+        public IEditedPriceStatusRepository EditedPriceStatusRepository { get; private set; }
+        public IOrderPaymentStatusRepository OrderPaymentStatusRepository { get; private set; }
+        public IOrderSourceRepository OrderSourceRepository { get; private set; }
+        public IPaymentTypeRepository PaymentTypeRepository { get; private set; }
         public UOW(DataContext DataContext, IConfiguration Configuration)
         {
             Repositories.RequestHistoryRepository.ConnectionString = Configuration["MongoConnection:ConnectionString"];
@@ -186,6 +200,13 @@ namespace ELODIE.Repositories
             CustomerGroupingRepository = new CustomerGroupingRepository(DataContext);
             CustomerSourceRepository = new CustomerSourceRepository(DataContext);
             ProfessionRepository = new ProfessionRepository(DataContext);
+            CustomerSalesOrderContentRepository = new CustomerSalesOrderContentRepository(DataContext);
+            CustomerSalesOrderRepository = new CustomerSalesOrderRepository(DataContext);
+            CustomerSalesOrderPaymentHistoryRepository = new CustomerSalesOrderPaymentHistoryRepository(DataContext);
+            EditedPriceStatusRepository = new EditedPriceStatusRepository(DataContext);
+            OrderPaymentStatusRepository = new OrderPaymentStatusRepository(DataContext);
+            OrderSourceRepository = new OrderSourceRepository(DataContext);
+            PaymentTypeRepository = new PaymentTypeRepository(DataContext);
         }
         public async Task Begin()
         {

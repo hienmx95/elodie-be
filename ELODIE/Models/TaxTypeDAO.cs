@@ -7,6 +7,7 @@ namespace ELODIE.Models
     {
         public TaxTypeDAO()
         {
+            CustomerSalesOrderContents = new HashSet<CustomerSalesOrderContentDAO>();
             Products = new HashSet<ProductDAO>();
         }
 
@@ -22,6 +23,7 @@ namespace ELODIE.Models
         public Guid RowId { get; set; }
 
         public virtual StatusDAO Status { get; set; }
+        public virtual ICollection<CustomerSalesOrderContentDAO> CustomerSalesOrderContents { get; set; }
         public virtual ICollection<ProductDAO> Products { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace ELODIE.Models
         public CodeGeneratorRuleDAO()
         {
             CodeGeneratorRuleEntityComponentMappings = new HashSet<CodeGeneratorRuleEntityComponentMappingDAO>();
+            CustomerSalesOrders = new HashSet<CustomerSalesOrderDAO>();
             Customers = new HashSet<CustomerDAO>();
             Products = new HashSet<ProductDAO>();
         }
@@ -25,6 +26,7 @@ namespace ELODIE.Models
         public virtual EntityTypeDAO EntityType { get; set; }
         public virtual StatusDAO Status { get; set; }
         public virtual ICollection<CodeGeneratorRuleEntityComponentMappingDAO> CodeGeneratorRuleEntityComponentMappings { get; set; }
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrders { get; set; }
         public virtual ICollection<CustomerDAO> Customers { get; set; }
         public virtual ICollection<ProductDAO> Products { get; set; }
     }

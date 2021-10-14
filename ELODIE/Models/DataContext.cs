@@ -22,8 +22,12 @@ namespace ELODIE.Models
         public virtual DbSet<CustomerDAO> Customer { get; set; }
         public virtual DbSet<CustomerCustomerGroupingMappingDAO> CustomerCustomerGroupingMapping { get; set; }
         public virtual DbSet<CustomerGroupingDAO> CustomerGrouping { get; set; }
+        public virtual DbSet<CustomerSalesOrderDAO> CustomerSalesOrder { get; set; }
+        public virtual DbSet<CustomerSalesOrderContentDAO> CustomerSalesOrderContent { get; set; }
+        public virtual DbSet<CustomerSalesOrderPaymentHistoryDAO> CustomerSalesOrderPaymentHistory { get; set; }
         public virtual DbSet<CustomerSourceDAO> CustomerSource { get; set; }
         public virtual DbSet<DistrictDAO> District { get; set; }
+        public virtual DbSet<EditedPriceStatusDAO> EditedPriceStatus { get; set; }
         public virtual DbSet<EntityComponentDAO> EntityComponent { get; set; }
         public virtual DbSet<EntityTypeDAO> EntityType { get; set; }
         public virtual DbSet<FieldDAO> Field { get; set; }
@@ -41,8 +45,11 @@ namespace ELODIE.Models
         public virtual DbSet<ListDAO> List { get; set; }
         public virtual DbSet<MenuDAO> Menu { get; set; }
         public virtual DbSet<NationDAO> Nation { get; set; }
+        public virtual DbSet<OrderPaymentStatusDAO> OrderPaymentStatus { get; set; }
+        public virtual DbSet<OrderSourceDAO> OrderSource { get; set; }
         public virtual DbSet<OrganizationDAO> Organization { get; set; }
         public virtual DbSet<PageDAO> Page { get; set; }
+        public virtual DbSet<PaymentTypeDAO> PaymentType { get; set; }
         public virtual DbSet<PermissionDAO> Permission { get; set; }
         public virtual DbSet<PermissionActionMappingDAO> PermissionActionMapping { get; set; }
         public virtual DbSet<PermissionContentDAO> PermissionContent { get; set; }
@@ -587,6 +594,230 @@ namespace ELODIE.Models
                 entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             });
 
+            modelBuilder.Entity<CustomerSalesOrderDAO>(entity =>
+            {
+                entity.ToTable("CustomerSalesOrder", "ORDER");
+
+                entity.Property(e => e.Code).HasMaxLength(50);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeliveryAddress).HasMaxLength(4000);
+
+                entity.Property(e => e.DeliveryDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DeliveryZIPCode).HasMaxLength(50);
+
+                entity.Property(e => e.GeneralDiscountAmount).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.GeneralDiscountPercentage).HasColumnType("decimal(8, 2)");
+
+                entity.Property(e => e.InvoiceAddress).HasMaxLength(4000);
+
+                entity.Property(e => e.InvoiceZIPCode).HasMaxLength(50);
+
+                entity.Property(e => e.Note).HasMaxLength(4000);
+
+                entity.Property(e => e.OrderDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ShippingName).HasMaxLength(500);
+
+                entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.Total).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.TotalTax).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.TotalTaxOther).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
+                entity.HasOne(d => d.CodeGeneratorRule)
+                    .WithMany(p => p.CustomerSalesOrders)
+                    .HasForeignKey(d => d.CodeGeneratorRuleId)
+                    .HasConstraintName("FK_CustomerSalesOrder_CodeGeneratorRule");
+
+                entity.HasOne(d => d.Creator)
+                    .WithMany(p => p.CustomerSalesOrderCreators)
+                    .HasForeignKey(d => d.CreatorId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrder_AppUser1");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.CustomerSalesOrders)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrder_Customer");
+
+                entity.HasOne(d => d.DeliveryDistrict)
+                    .WithMany(p => p.CustomerSalesOrderDeliveryDistricts)
+                    .HasForeignKey(d => d.DeliveryDistrictId)
+                    .HasConstraintName("FK_CustomerSalesOrder_District1");
+
+                entity.HasOne(d => d.DeliveryNation)
+                    .WithMany(p => p.CustomerSalesOrderDeliveryNations)
+                    .HasForeignKey(d => d.DeliveryNationId)
+                    .HasConstraintName("FK_CustomerSalesOrder_Nation1");
+
+                entity.HasOne(d => d.DeliveryProvince)
+                    .WithMany(p => p.CustomerSalesOrderDeliveryProvinces)
+                    .HasForeignKey(d => d.DeliveryProvinceId)
+                    .HasConstraintName("FK_CustomerSalesOrder_Province1");
+
+                entity.HasOne(d => d.DeliveryWard)
+                    .WithMany(p => p.CustomerSalesOrderDeliveryWards)
+                    .HasForeignKey(d => d.DeliveryWardId)
+                    .HasConstraintName("FK_CustomerSalesOrder_Ward1");
+
+                entity.HasOne(d => d.EditedPriceStatus)
+                    .WithMany(p => p.CustomerSalesOrders)
+                    .HasForeignKey(d => d.EditedPriceStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrder_EditedPriceStatus");
+
+                entity.HasOne(d => d.InvoiceDistrict)
+                    .WithMany(p => p.CustomerSalesOrderInvoiceDistricts)
+                    .HasForeignKey(d => d.InvoiceDistrictId)
+                    .HasConstraintName("FK_CustomerSalesOrder_District");
+
+                entity.HasOne(d => d.InvoiceNation)
+                    .WithMany(p => p.CustomerSalesOrderInvoiceNations)
+                    .HasForeignKey(d => d.InvoiceNationId)
+                    .HasConstraintName("FK_CustomerSalesOrder_Nation");
+
+                entity.HasOne(d => d.InvoiceProvince)
+                    .WithMany(p => p.CustomerSalesOrderInvoiceProvinces)
+                    .HasForeignKey(d => d.InvoiceProvinceId)
+                    .HasConstraintName("FK_CustomerSalesOrder_Province");
+
+                entity.HasOne(d => d.InvoiceWard)
+                    .WithMany(p => p.CustomerSalesOrderInvoiceWards)
+                    .HasForeignKey(d => d.InvoiceWardId)
+                    .HasConstraintName("FK_CustomerSalesOrder_Ward");
+
+                entity.HasOne(d => d.OrderPaymentStatus)
+                    .WithMany(p => p.CustomerSalesOrders)
+                    .HasForeignKey(d => d.OrderPaymentStatusId)
+                    .HasConstraintName("FK_CustomerSalesOrder_OrderPaymentStatus");
+
+                entity.HasOne(d => d.OrderSource)
+                    .WithMany(p => p.CustomerSalesOrders)
+                    .HasForeignKey(d => d.OrderSourceId)
+                    .HasConstraintName("FK_CustomerSalesOrder_OrderSource");
+
+                entity.HasOne(d => d.Organization)
+                    .WithMany(p => p.CustomerSalesOrders)
+                    .HasForeignKey(d => d.OrganizationId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrder_Organization");
+
+                entity.HasOne(d => d.RequestState)
+                    .WithMany(p => p.CustomerSalesOrders)
+                    .HasForeignKey(d => d.RequestStateId)
+                    .HasConstraintName("FK_CustomerSalesOrder_RequestState");
+
+                entity.HasOne(d => d.SalesEmployee)
+                    .WithMany(p => p.CustomerSalesOrderSalesEmployees)
+                    .HasForeignKey(d => d.SalesEmployeeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrder_AppUser");
+            });
+
+            modelBuilder.Entity<CustomerSalesOrderContentDAO>(entity =>
+            {
+                entity.ToTable("CustomerSalesOrderContent", "ORDER");
+
+                entity.Property(e => e.Amount).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.DiscountPercentage).HasColumnType("decimal(8, 2)");
+
+                entity.Property(e => e.GeneralDiscountAmount).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.GeneralDiscountPercentage).HasColumnType("decimal(8, 2)");
+
+                entity.Property(e => e.PrimaryPrice).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.SalePrice).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.TaxAmount).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.TaxAmountOther).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.TaxPercentage).HasColumnType("decimal(8, 2)");
+
+                entity.Property(e => e.TaxPercentageOther).HasColumnType("decimal(8, 2)");
+
+                entity.HasOne(d => d.CustomerSalesOrder)
+                    .WithMany(p => p.CustomerSalesOrderContents)
+                    .HasForeignKey(d => d.CustomerSalesOrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrderContent_CustomerSalesOrder");
+
+                entity.HasOne(d => d.EditedPriceStatus)
+                    .WithMany(p => p.CustomerSalesOrderContents)
+                    .HasForeignKey(d => d.EditedPriceStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrderContent_EditedPriceStatus");
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.CustomerSalesOrderContents)
+                    .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrderContent_Item");
+
+                entity.HasOne(d => d.PrimaryUnitOfMeasure)
+                    .WithMany(p => p.CustomerSalesOrderContentPrimaryUnitOfMeasures)
+                    .HasForeignKey(d => d.PrimaryUnitOfMeasureId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrderContent_UnitOfMeasure1");
+
+                entity.HasOne(d => d.TaxType)
+                    .WithMany(p => p.CustomerSalesOrderContents)
+                    .HasForeignKey(d => d.TaxTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrderContent_TaxType");
+
+                entity.HasOne(d => d.UnitOfMeasure)
+                    .WithMany(p => p.CustomerSalesOrderContentUnitOfMeasures)
+                    .HasForeignKey(d => d.UnitOfMeasureId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrderContent_UnitOfMeasure");
+            });
+
+            modelBuilder.Entity<CustomerSalesOrderPaymentHistoryDAO>(entity =>
+            {
+                entity.ToTable("CustomerSalesOrderPaymentHistory", "ORDER");
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).HasMaxLength(4000);
+
+                entity.Property(e => e.PaymentAmount).HasColumnType("decimal(18, 4)");
+
+                entity.Property(e => e.PaymentMilestone).HasMaxLength(400);
+
+                entity.Property(e => e.PaymentPercentage).HasColumnType("decimal(8, 2)");
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
+                entity.HasOne(d => d.CustomerSalesOrder)
+                    .WithMany(p => p.CustomerSalesOrderPaymentHistories)
+                    .HasForeignKey(d => d.CustomerSalesOrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CustomerSalesOrderPaymentHistory_CustomerSalesOrder");
+
+                entity.HasOne(d => d.PaymentType)
+                    .WithMany(p => p.CustomerSalesOrderPaymentHistories)
+                    .HasForeignKey(d => d.PaymentTypeId)
+                    .HasConstraintName("FK_CustomerSalesOrderPaymentHistory_PaymentType");
+            });
+
             modelBuilder.Entity<CustomerSourceDAO>(entity =>
             {
                 entity.ToTable("CustomerSource", "MDM");
@@ -654,6 +885,17 @@ namespace ELODIE.Models
                     .HasForeignKey(d => d.StatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_District_Status");
+            });
+
+            modelBuilder.Entity<EditedPriceStatusDAO>(entity =>
+            {
+                entity.ToTable("EditedPriceStatus", "ENUM");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Code).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<EntityComponentDAO>(entity =>
@@ -988,6 +1230,42 @@ namespace ELODIE.Models
                     .HasConstraintName("FK_Nation_Status");
             });
 
+            modelBuilder.Entity<OrderPaymentStatusDAO>(entity =>
+            {
+                entity.ToTable("OrderPaymentStatus", "ENUM");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<OrderSourceDAO>(entity =>
+            {
+                entity.ToTable("OrderSource", "MDM");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).HasMaxLength(2000);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            });
+
             modelBuilder.Entity<OrganizationDAO>(entity =>
             {
                 entity.ToTable("Organization", "MDM");
@@ -1041,6 +1319,25 @@ namespace ELODIE.Models
                 entity.Property(e => e.Path)
                     .IsRequired()
                     .HasMaxLength(400);
+            });
+
+            modelBuilder.Entity<PaymentTypeDAO>(entity =>
+            {
+                entity.ToTable("PaymentType", "MDM");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<PermissionDAO>(entity =>

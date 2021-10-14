@@ -8,6 +8,7 @@ namespace ELODIE.Models
         public CustomerDAO()
         {
             CustomerCustomerGroupingMappings = new HashSet<CustomerCustomerGroupingMappingDAO>();
+            CustomerSalesOrders = new HashSet<CustomerSalesOrderDAO>();
         }
 
         public long Id { get; set; }
@@ -49,5 +50,6 @@ namespace ELODIE.Models
         public virtual StatusDAO Status { get; set; }
         public virtual WardDAO Ward { get; set; }
         public virtual ICollection<CustomerCustomerGroupingMappingDAO> CustomerCustomerGroupingMappings { get; set; }
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrders { get; set; }
     }
 }

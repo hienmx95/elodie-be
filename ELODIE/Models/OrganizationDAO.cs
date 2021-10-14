@@ -8,6 +8,7 @@ namespace ELODIE.Models
         public OrganizationDAO()
         {
             AppUsers = new HashSet<AppUserDAO>();
+            CustomerSalesOrders = new HashSet<CustomerSalesOrderDAO>();
             Customers = new HashSet<CustomerDAO>();
             InverseParent = new HashSet<OrganizationDAO>();
             Warehouses = new HashSet<WarehouseDAO>();
@@ -34,6 +35,7 @@ namespace ELODIE.Models
         public virtual OrganizationDAO Parent { get; set; }
         public virtual StatusDAO Status { get; set; }
         public virtual ICollection<AppUserDAO> AppUsers { get; set; }
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrders { get; set; }
         public virtual ICollection<CustomerDAO> Customers { get; set; }
         public virtual ICollection<OrganizationDAO> InverseParent { get; set; }
         public virtual ICollection<WarehouseDAO> Warehouses { get; set; }

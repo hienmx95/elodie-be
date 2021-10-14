@@ -7,6 +7,8 @@ namespace ELODIE.Models
     {
         public NationDAO()
         {
+            CustomerSalesOrderDeliveryNations = new HashSet<CustomerSalesOrderDAO>();
+            CustomerSalesOrderInvoiceNations = new HashSet<CustomerSalesOrderDAO>();
             Customers = new HashSet<CustomerDAO>();
             Suppliers = new HashSet<SupplierDAO>();
         }
@@ -23,6 +25,8 @@ namespace ELODIE.Models
         public Guid RowId { get; set; }
 
         public virtual StatusDAO Status { get; set; }
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrderDeliveryNations { get; set; }
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrderInvoiceNations { get; set; }
         public virtual ICollection<CustomerDAO> Customers { get; set; }
         public virtual ICollection<SupplierDAO> Suppliers { get; set; }
     }

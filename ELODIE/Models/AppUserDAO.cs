@@ -11,6 +11,8 @@ namespace ELODIE.Models
             AppUserSiteMappings = new HashSet<AppUserSiteMappingDAO>();
             CustomerAppUsers = new HashSet<CustomerDAO>();
             CustomerCreators = new HashSet<CustomerDAO>();
+            CustomerSalesOrderCreators = new HashSet<CustomerSalesOrderDAO>();
+            CustomerSalesOrderSalesEmployees = new HashSet<CustomerSalesOrderDAO>();
             ItemHistories = new HashSet<ItemHistoryDAO>();
             RequestWorkflowHistories = new HashSet<RequestWorkflowHistoryDAO>();
             RequestWorkflowStepMappings = new HashSet<RequestWorkflowStepMappingDAO>();
@@ -92,6 +94,8 @@ namespace ELODIE.Models
         public virtual ICollection<AppUserSiteMappingDAO> AppUserSiteMappings { get; set; }
         public virtual ICollection<CustomerDAO> CustomerAppUsers { get; set; }
         public virtual ICollection<CustomerDAO> CustomerCreators { get; set; }
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrderCreators { get; set; }
+        public virtual ICollection<CustomerSalesOrderDAO> CustomerSalesOrderSalesEmployees { get; set; }
         public virtual ICollection<ItemHistoryDAO> ItemHistories { get; set; }
         public virtual ICollection<RequestWorkflowHistoryDAO> RequestWorkflowHistories { get; set; }
         public virtual ICollection<RequestWorkflowStepMappingDAO> RequestWorkflowStepMappings { get; set; }
