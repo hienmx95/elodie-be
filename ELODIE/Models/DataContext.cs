@@ -35,6 +35,7 @@ namespace ELODIE.Models
         public virtual DbSet<HashDAO> Hash { get; set; }
         public virtual DbSet<IdGeneratorDAO> IdGenerator { get; set; }
         public virtual DbSet<ImageDAO> Image { get; set; }
+        public virtual DbSet<InventoryDAO> Inventory { get; set; }
         public virtual DbSet<ItemDAO> Item { get; set; }
         public virtual DbSet<ItemHistoryDAO> ItemHistory { get; set; }
         public virtual DbSet<ItemImageMappingDAO> ItemImageMapping { get; set; }
@@ -1018,6 +1019,47 @@ namespace ELODIE.Models
                     .IsRequired()
                     .HasMaxLength(4000)
                     .HasComment("Đường dẫn Url");
+            });
+
+            modelBuilder.Entity<InventoryDAO>(entity =>
+            {
+                entity.HasKey(e => new { e.WarehouseId, e.ItemId, e.AlternateUnitOfMeasureId });
+
+                entity.ToTable("Inventory", "MDM");
+
+                entity.Property(e => e.AlternateQuantity).HasColumnType("decimal(20, 4)");
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Quantity).HasColumnType("decimal(20, 4)");
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
+                entity.HasOne(d => d.AlternateUnitOfMeasure)
+                    .WithMany(p => p.InventoryAlternateUnitOfMeasures)
+                    .HasForeignKey(d => d.AlternateUnitOfMeasureId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Inventory_UnitOfMeasure");
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.Inventories)
+                    .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Inventory_Item");
+
+                entity.HasOne(d => d.UnitOfMeasure)
+                    .WithMany(p => p.InventoryUnitOfMeasures)
+                    .HasForeignKey(d => d.UnitOfMeasureId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Inventory_UOM");
+
+                entity.HasOne(d => d.Warehouse)
+                    .WithMany(p => p.Inventories)
+                    .HasForeignKey(d => d.WarehouseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Inventory_Warehouse");
             });
 
             modelBuilder.Entity<ItemDAO>(entity =>

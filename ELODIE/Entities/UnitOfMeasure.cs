@@ -20,6 +20,7 @@ namespace ELODIE.Entities
         public bool Used { get; set; }
         public Guid RowId { get; set; }
         public Status Status { get; set; }
+        public UnitOfMeasure MainUnitOfMeasure { get; set; }
         public bool Equals(UnitOfMeasure other)
         {
             return other != null && Id == other.Id;

@@ -8,6 +8,7 @@ namespace ELODIE.Models
         public ItemDAO()
         {
             CustomerSalesOrderContents = new HashSet<CustomerSalesOrderContentDAO>();
+            Inventories = new HashSet<InventoryDAO>();
             ItemHistories = new HashSet<ItemHistoryDAO>();
             ItemImageMappings = new HashSet<ItemImageMappingDAO>();
             ItemVariationMappings = new HashSet<ItemVariationMappingDAO>();
@@ -31,6 +32,7 @@ namespace ELODIE.Models
         public virtual ProductDAO Product { get; set; }
         public virtual StatusDAO Status { get; set; }
         public virtual ICollection<CustomerSalesOrderContentDAO> CustomerSalesOrderContents { get; set; }
+        public virtual ICollection<InventoryDAO> Inventories { get; set; }
         public virtual ICollection<ItemHistoryDAO> ItemHistories { get; set; }
         public virtual ICollection<ItemImageMappingDAO> ItemImageMappings { get; set; }
         public virtual ICollection<ItemVariationMappingDAO> ItemVariationMappings { get; set; }

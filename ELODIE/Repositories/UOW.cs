@@ -73,6 +73,7 @@ namespace ELODIE.Repositories
         IOrderPaymentStatusRepository OrderPaymentStatusRepository { get; }
         IOrderSourceRepository OrderSourceRepository { get; }
         IPaymentTypeRepository PaymentTypeRepository { get; }
+        IWarehouseRepository WarehouseRepository { get; }
     }
 
     public class UOW : IUOW
@@ -139,6 +140,7 @@ namespace ELODIE.Repositories
         public IOrderPaymentStatusRepository OrderPaymentStatusRepository { get; private set; }
         public IOrderSourceRepository OrderSourceRepository { get; private set; }
         public IPaymentTypeRepository PaymentTypeRepository { get; private set; }
+        public IWarehouseRepository WarehouseRepository { get; private set; }
         public UOW(DataContext DataContext, IConfiguration Configuration)
         {
             Repositories.RequestHistoryRepository.ConnectionString = Configuration["MongoConnection:ConnectionString"];
@@ -207,6 +209,7 @@ namespace ELODIE.Repositories
             OrderPaymentStatusRepository = new OrderPaymentStatusRepository(DataContext);
             OrderSourceRepository = new OrderSourceRepository(DataContext);
             PaymentTypeRepository = new PaymentTypeRepository(DataContext);
+            WarehouseRepository = new WarehouseRepository(DataContext);
         }
         public async Task Begin()
         {

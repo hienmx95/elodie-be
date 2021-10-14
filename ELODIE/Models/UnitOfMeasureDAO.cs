@@ -9,6 +9,8 @@ namespace ELODIE.Models
         {
             CustomerSalesOrderContentPrimaryUnitOfMeasures = new HashSet<CustomerSalesOrderContentDAO>();
             CustomerSalesOrderContentUnitOfMeasures = new HashSet<CustomerSalesOrderContentDAO>();
+            InventoryAlternateUnitOfMeasures = new HashSet<InventoryDAO>();
+            InventoryUnitOfMeasures = new HashSet<InventoryDAO>();
             Products = new HashSet<ProductDAO>();
             UnitOfMeasureGroupingContents = new HashSet<UnitOfMeasureGroupingContentDAO>();
             UnitOfMeasureGroupings = new HashSet<UnitOfMeasureGroupingDAO>();
@@ -28,6 +30,8 @@ namespace ELODIE.Models
         public virtual StatusDAO Status { get; set; }
         public virtual ICollection<CustomerSalesOrderContentDAO> CustomerSalesOrderContentPrimaryUnitOfMeasures { get; set; }
         public virtual ICollection<CustomerSalesOrderContentDAO> CustomerSalesOrderContentUnitOfMeasures { get; set; }
+        public virtual ICollection<InventoryDAO> InventoryAlternateUnitOfMeasures { get; set; }
+        public virtual ICollection<InventoryDAO> InventoryUnitOfMeasures { get; set; }
         public virtual ICollection<ProductDAO> Products { get; set; }
         public virtual ICollection<UnitOfMeasureGroupingContentDAO> UnitOfMeasureGroupingContents { get; set; }
         public virtual ICollection<UnitOfMeasureGroupingDAO> UnitOfMeasureGroupings { get; set; }
