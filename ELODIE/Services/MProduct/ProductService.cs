@@ -140,61 +140,87 @@ namespace ELODIE.Services.MProduct
             try
             {
                 await UOW.Begin();
-                CodeGeneratorRule CodeGeneratorRule = await GetCodeGeneratorRule();
-                if (CodeGeneratorRule != null)
+                //CodeGeneratorRule CodeGeneratorRule = await GetCodeGeneratorRule();
+                //if (CodeGeneratorRule != null)
+                //{
+                //    Product.Code = string.Empty; // tạo một empty code để insert tạm
+                //    await UOW.ProductRepository.Create(Product); // tạo sản phẩm đơn thuần
+                //    await CodeGenerator(new List<Product> { Product }, CodeGeneratorRule); // sinh mã cho product, đánh dấu đã dùng với codeRule
+                //    if (Product.UsedVariationId == UsedVariationEnum.NOTUSED.Id)
+                //    {
+                //        Product.Items = new List<Item>();
+                //        Product.Items.Add(new Item
+                //        {
+                //            Code = Product.Code,
+                //            ERPCode = Product.ERPCode,
+                //            Name = Product.Name,
+                //            ScanCode = Product.ScanCode,
+                //            RetailPrice = Product.RetailPrice,
+                //            SalePrice = Product.SalePrice,
+                //            ProductId = Product.Id,
+                //            StatusId = StatusEnum.ACTIVE.Id
+                //        });
+                //    } // sau khi sinh mã, nếu không dùng phiên bản thì update một item
+                //    if (Product.UsedVariationId == UsedVariationEnum.USED.Id && Product.Items != null)
+                //    {
+                //        foreach (Item Item in Product.Items)
+                //        {
+                //            Item.Code = $"{Product.Code}.{Item.Code}";
+                //        }
+                //    } // nếu có đung phiên bản và có items, thay nối thêm code cho item bằng code của product
+                //} // nếu có codeRule
+                //else
+                //{
+                //    await UOW.ProductRepository.Create(Product);
+                //    if (Product.UsedVariationId == UsedVariationEnum.NOTUSED.Id)
+                //    {
+                //        Product.Items = new List<Item>();
+                //        Product.Items.Add(new Item
+                //        {
+                //            Code = Product.Code,
+                //            ERPCode = Product.ERPCode,
+                //            Name = Product.Name,
+                //            ScanCode = Product.ScanCode,
+                //            RetailPrice = Product.RetailPrice,
+                //            SalePrice = Product.SalePrice,
+                //            ProductId = Product.Id,
+                //            StatusId = StatusEnum.ACTIVE.Id
+                //        });
+                //    }
+                //    if (Product.UsedVariationId == UsedVariationEnum.USED.Id && Product.Items != null)
+                //    {
+                //        foreach (Item Item in Product.Items)
+                //        {
+                //            Item.Code = $"{Product.Code}.{Item.Code}";
+                //        }
+                //    }
+                //} // nếu không có codeRule
+                Product.Code = "";
+                await UOW.ProductRepository.Create(Product);
+                Product = await UOW.ProductRepository.Get(Product.Id);
+                Product.Code = $"SP{Product.Id}";
+                if (Product.UsedVariationId == UsedVariationEnum.NOTUSED.Id)
                 {
-                    Product.Code = string.Empty; // tạo một empty code để insert tạm
-                    await UOW.ProductRepository.Create(Product); // tạo sản phẩm đơn thuần
-                    await CodeGenerator(new List<Product> { Product }, CodeGeneratorRule); // sinh mã cho product, đánh dấu đã dùng với codeRule
-                    if (Product.UsedVariationId == UsedVariationEnum.NOTUSED.Id)
+                    Product.Items = new List<Item>();
+                    Product.Items.Add(new Item
                     {
-                        Product.Items = new List<Item>();
-                        Product.Items.Add(new Item
-                        {
-                            Code = Product.Code,
-                            ERPCode = Product.ERPCode,
-                            Name = Product.Name,
-                            ScanCode = Product.ScanCode,
-                            RetailPrice = Product.RetailPrice,
-                            SalePrice = Product.SalePrice,
-                            ProductId = Product.Id,
-                            StatusId = StatusEnum.ACTIVE.Id
-                        });
-                    } // sau khi sinh mã, nếu không dùng phiên bản thì update một item
-                    if (Product.UsedVariationId == UsedVariationEnum.USED.Id && Product.Items != null)
-                    {
-                        foreach (Item Item in Product.Items)
-                        {
-                            Item.Code = $"{Product.Code}.{Item.Code}";
-                        }
-                    } // nếu có đung phiên bản và có items, thay nối thêm code cho item bằng code của product
-                } // nếu có codeRule
-                else
+                        Code = Product.Code,
+                        ERPCode = Product.ERPCode,
+                        Name = Product.Name,
+                        ScanCode = Product.ScanCode,
+                        RetailPrice = Product.RetailPrice,
+                        SalePrice = Product.SalePrice,
+                        ProductId = Product.Id,
+                        StatusId = StatusEnum.ACTIVE.Id
+                    });
+                }
+                if (Product.UsedVariationId == UsedVariationEnum.USED.Id && Product.Items != null)
                 {
-                    await UOW.ProductRepository.Create(Product);
-                    if (Product.UsedVariationId == UsedVariationEnum.NOTUSED.Id)
+                    foreach (Item Item in Product.Items)
                     {
-                        Product.Items = new List<Item>();
-                        Product.Items.Add(new Item
-                        {
-                            Code = Product.Code,
-                            ERPCode = Product.ERPCode,
-                            Name = Product.Name,
-                            ScanCode = Product.ScanCode,
-                            RetailPrice = Product.RetailPrice,
-                            SalePrice = Product.SalePrice,
-                            ProductId = Product.Id,
-                            StatusId = StatusEnum.ACTIVE.Id
-                        });
+                        Item.Code = $"{Product.Code}.{Item.Code}";
                     }
-                    if (Product.UsedVariationId == UsedVariationEnum.USED.Id && Product.Items != null)
-                    {
-                        foreach (Item Item in Product.Items)
-                        {
-                            Item.Code = $"{Product.Code}.{Item.Code}";
-                        }
-                    }
-                } // nếu không có codeRule
+                }
                 await UOW.ProductRepository.Update(Product); // update lại items sau khi thay đổi mã
                 await UOW.Commit();
                 Product = (await UOW.ProductRepository.List(new List<long> { Product.Id })).FirstOrDefault();

@@ -122,8 +122,6 @@ namespace ELODIE.Repositories
                 query = query.Where(q => q.Email, filter.Email);
             if (filter.Address != null)
                 query = query.Where(q => q.Address, filter.Address);
-            if (filter.IsDisplay != null)
-                query = query.Where(q => q.IsDisplay == filter.IsDisplay);
             query = OrFilter(query, filter);
             return query;
         }
