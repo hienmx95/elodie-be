@@ -24,12 +24,12 @@ namespace ELODIE.Common
     public class RequestStateEnum
     {
         public static GenericEnum NEW = new GenericEnum { Id = 1, Code = "NEW", Name = "Mới tạo" };
-        public static GenericEnum PENDING = new GenericEnum { Id = 2, Code = "PENDING", Name = "Chờ duyệt" };
-        public static GenericEnum APPROVED = new GenericEnum { Id = 3, Code = "APPROVED", Name = "Hoàn thành" };
-        public static GenericEnum REJECTED = new GenericEnum { Id = 4, Code = "REJECTED", Name = "Từ chối" };
+        public static GenericEnum PROCESSING = new GenericEnum { Id = 2, Code = "PROCESSING", Name = "Đang xử lý" };
+        public static GenericEnum COMPLETED = new GenericEnum { Id = 3, Code = "COMPLETED", Name = "Hoàn thành" };
+        public static GenericEnum REJECTED = new GenericEnum { Id = 4, Code = "REJECTED", Name = "Hủy" };
         public static List<GenericEnum> RequestStateEnumList = new List<GenericEnum>()
         {
-            NEW, PENDING, APPROVED, REJECTED
+            NEW, PROCESSING, COMPLETED, REJECTED
         };
     }
 
