@@ -190,6 +190,7 @@ namespace ELODIE.Rpc.dashboards.order
                              (SaleEmployeeId.HasValue == false || o.SalesEmployeeId == SaleEmployeeId.Value) &&
                              OrganizationIds.Contains(o.OrganizationId) &&
                              o.RequestStateId == RequestStateEnum.COMPLETED.Id
+                             && o.DeletedAt == null
                              select o;
 
             var Orders = await queryOrder.ToListAsync();
@@ -234,6 +235,7 @@ namespace ELODIE.Rpc.dashboards.order
                              AppUserIds.Contains(o.SalesEmployeeId) &&
                              (SaleEmployeeId.HasValue == false || o.SalesEmployeeId == SaleEmployeeId.Value) &&
                              OrganizationIds.Contains(o.OrganizationId) 
+                             && o.DeletedAt == null
                              //&& o.RequestStateId == RequestStateEnum.COMPLETED.Id
                              select o;
 
@@ -278,6 +280,7 @@ namespace ELODIE.Rpc.dashboards.order
                              (SaleEmployeeId.HasValue == false || o.SalesEmployeeId == SaleEmployeeId.Value) &&
                              OrganizationIds.Contains(o.OrganizationId) &&
                              o.RequestStateId == RequestStateEnum.COMPLETED.Id
+                             && o.DeletedAt == null
                              select o;
 
             return await queryOrder.Select(x => x.Id).Distinct().CountAsync();
@@ -321,6 +324,7 @@ namespace ELODIE.Rpc.dashboards.order
                              (SaleEmployeeId.HasValue == false || o.SalesEmployeeId == SaleEmployeeId.Value) &&
                              OrganizationIds.Contains(o.OrganizationId) &&
                              o.RequestStateId == RequestStateEnum.PROCESSING.Id
+                             && o.DeletedAt == null
                              select o;
 
             return await queryOrder.Select(x => x.Id).Distinct().CountAsync();
@@ -365,6 +369,7 @@ namespace ELODIE.Rpc.dashboards.order
                              (SaleEmployeeId.HasValue == false || o.SalesEmployeeId == SaleEmployeeId.Value) &&
                              OrganizationIds.Contains(o.OrganizationId) &&
                              o.RequestStateId == RequestStateEnum.REJECTED.Id
+                             && o.DeletedAt == null
                              select o;
 
             return await queryOrder.Select(x => x.Id).Distinct().CountAsync();
@@ -408,6 +413,7 @@ namespace ELODIE.Rpc.dashboards.order
                         (SaleEmployeeId.HasValue == false || o.SalesEmployeeId == SaleEmployeeId.Value) &&
                         OrganizationIds.Contains(o.OrganizationId) &&
                         o.RequestStateId == RequestStateEnum.COMPLETED.Id
+                        && o.DeletedAt == null
                         select o;
 
             var CustomerSalesOrders = await query.ToListAsync();

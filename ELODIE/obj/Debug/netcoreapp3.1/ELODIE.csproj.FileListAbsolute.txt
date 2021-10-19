@@ -238,3 +238,4 @@ I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\CustomerGro
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\CustomerSourceValidator.json
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\CustomerValidator.json
 I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\ProfessionValidator.json
+I:\Project\RĐ\ELODIE.BE\ELODIE\bin\Debug\netcoreapp3.1\Resources\vi\CustomerSalesOrderValidator.json

@@ -1,0 +1,79 @@
+﻿{
+  "CustomerSalesOrder": {
+    "Id": {
+      "IdNotExisted": "Id không tồn tại",
+      "ContentEmpty": "Chưa chọn sản phẩm cho đơn hàng"
+    },
+    "Code": {
+      "CodeEmpty": "Chưa nhập mã đơn hàng",
+      "CodeHasSpecialCharacter": "Mã đơn hàng không thể chứa khoảng trắng hoặc kí tự Tiếng Việt",
+      "CodeExisted": "Mã đơn hàng đã tồn tại"
+    },
+    "CustomerType": {
+      "CustomerTypeEmpty": "Chưa chọn loại khách hàng"
+    },
+    "Customer": {
+      "CustomerEmpty": "Chưa chọn khách hàng",
+      "CustomerNotExisted": "Khách hàng không tồn tại",
+      "CustomerType": {
+        "CustomerTypeInvalid": "Loại khách hàng không phù hợp với loại hợp đồng"
+      }
+    },
+    "OrderSource": {
+      "OrderSourceEmpty": "Chưa chọn nguồn đơn hàng",
+      "OrderSourceNotExisted": "Nguồn đơn hàng không tồn tại"
+    },
+    "SalesEmployee": {
+      "SalesEmployeeEmpty": "Chưa chọn nhân viên phụ trách",
+      "SalesEmployeeNotExisted": "Nhân viên phụ trách không tồn tại"
+    },
+    "OrderDate": {
+      "OrderDateEmpty": "Chưa nhập ngày đặt hàng"
+    },
+    "DeliveryDate": {
+      "DeliveryDateInvalid": "Ngày giao hàng không hợp lệ"
+    },
+    "CustomerSalesOrderContent": {
+      "UnitOfMeasure": {
+        "UnitOfMeasureEmpty": "Chưa chọn đơn vị tính",
+        "UnitOfMeasureNotExisted": "Đơn vị tính không tồn tại"
+      },
+      "Item": {
+        "ItemNotExisted": "Sản phẩm không tồn tại"
+      },
+      "Quantity": {
+        "QuantityEmpty": "Chưa nhập số lượng hoặc số lượng không hợp lệ"
+      }
+    },
+    "CustomerSalesOrderPromotion": {
+      "UnitOfMeasure": {
+        "UnitOfMeasureEmpty": "Chưa chọn đơn vị tính",
+        "UnitOfMeasureNotExisted": "Đơn vị tính không tồn tại"
+      },
+      "Item": {
+        "ItemNotExisted": "Sản phẩm không tồn tại"
+      },
+      "Quantity": {
+        "QuantityEmpty": "Chưa nhập số lượng hoặc số lượng không hợp lệ"
+      }
+    },
+    "DeliveryAddress": {
+      "DeliveryAddressEmpty": "Chưa nhập địa chỉ giao hàng"
+    },
+    "InvoiceAddress": {
+      "InvoiceAddressEmpty": "Chưa nhập địa chỉ xuất hoá đơn"
+    },
+    "EditedPriceStatus": {
+      "EditedPriceStatusNotExisted": "Trạng thái sửa giá không tồn tại"
+    },
+    "CustomerSalesOrderPaymentHistory": {
+      "PaymentType": {
+        "PaymentTypeEmpty": "Chưa chọn phương thức thanh toán"
+      },
+      "PaymentPercentage": {
+        "PaymentPercentageEmpty": "Chưa nhập phần trăm thanh toán",
+        "PaymentPercentageInvalid": "Phần trăm thanh toán nằm ngoài khoảng cho phép"
+      }
+    }
+  }
+}

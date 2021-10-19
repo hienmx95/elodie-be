@@ -1696,6 +1696,19 @@ namespace ELODIE.Rpc.customer_sales_order
                         Code = x.EditedPriceStatus.Code,
                         Name = x.EditedPriceStatus.Name,
                     },
+                    Item = x.Item == null ? null : new Item
+                    {
+                        Id = x.Item.Id,
+                        ProductId = x.Item.ProductId,
+                        Code = x.Item.Code,
+                        Name = x.Item.Name,
+                        ScanCode = x.Item.ScanCode,
+                        SalePrice = x.Item.SalePrice,
+                        RetailPrice = x.Item.RetailPrice,
+                        StatusId = x.Item.StatusId,
+                        Used = x.Item.Used,
+                        RowId = x.Item.RowId,
+                    },
                     PrimaryUnitOfMeasure = x.PrimaryUnitOfMeasure == null ? null : new UnitOfMeasure
                     {
                         Id = x.PrimaryUnitOfMeasure.Id,
