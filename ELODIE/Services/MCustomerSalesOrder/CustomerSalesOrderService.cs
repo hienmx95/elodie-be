@@ -93,7 +93,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 CustomerSalesOrder.CreatorId = CurrentContext.UserId;
                 CustomerSalesOrder.OrganizationId = SalesEmployee.OrganizationId;
                 CustomerSalesOrder.Organization = SalesEmployee.Organization;
-                //CustomerSalesOrder.RequestStateId = RequestStateEnum.NEW.Id;
+                CustomerSalesOrder.RequestStateId = RequestStateEnum.NEW.Id;
                 await UOW.CustomerSalesOrderRepository.Create(CustomerSalesOrder);
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
                 CustomerSalesOrder.Code = $"ORDER{CustomerSalesOrder.Id}";
