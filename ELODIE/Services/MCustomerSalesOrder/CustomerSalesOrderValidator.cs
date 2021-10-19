@@ -54,6 +54,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
             PaymentPercentageInvalid,
             OrderSourceNotExisted,
             OrderSourceEmpty,
+            RequestStateInvalid
         }
 
         private IUOW UOW;
@@ -114,6 +115,19 @@ namespace ELODIE.Services.MCustomerSalesOrder
                     CustomerSalesOrder.AddError(nameof(CustomerSalesOrderValidator), nameof(CustomerSalesOrder.OrderSource), ErrorCode.OrderSourceNotExisted);
             }
 
+            return CustomerSalesOrder.IsValidated;
+        }
+
+        private async Task<bool> ValidateRequestState(CustomerSalesOrder CustomerSalesOrder)
+        {
+            if (CustomerSalesOrder.RequestStateId != null)
+            {
+                if (CustomerSalesOrder.OrderPaymentStatusId != OrderPaymentStatusEnum.PAID.Id && CustomerSalesOrder.RequestStateId == RequestStateEnum.COMPLETED.Id)
+                {
+                    CustomerSalesOrder.AddError(nameof(CustomerSalesOrderValidator), nameof(CustomerSalesOrder.RequestState), ErrorCode.RequestStateInvalid);
+                }
+                
+            }
             return CustomerSalesOrder.IsValidated;
         }
 
@@ -322,6 +336,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 await ValidateEditedPrice(CustomerSalesOrder);
                 await ValidatePaymentHistory(CustomerSalesOrder);
                 await ValidateOrderSource(CustomerSalesOrder);
+                await ValidateRequestState(CustomerSalesOrder);
             }
             return CustomerSalesOrder.IsValidated;
         }

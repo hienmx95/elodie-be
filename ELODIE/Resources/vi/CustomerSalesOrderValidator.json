@@ -23,6 +23,9 @@
       "OrderSourceEmpty": "Chưa chọn nguồn đơn hàng",
       "OrderSourceNotExisted": "Nguồn đơn hàng không tồn tại"
     },
+    "RequestState": {
+      "RequestStateInvalid": "Thanh toán đủ 100% trước khi hoàn thành"
+    },
     "SalesEmployee": {
       "SalesEmployeeEmpty": "Chưa chọn nhân viên phụ trách",
       "SalesEmployeeNotExisted": "Nhân viên phụ trách không tồn tại"
