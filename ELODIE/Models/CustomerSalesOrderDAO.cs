@@ -9,6 +9,8 @@ namespace ELODIE.Models
         {
             CustomerSalesOrderContents = new HashSet<CustomerSalesOrderContentDAO>();
             CustomerSalesOrderPaymentHistories = new HashSet<CustomerSalesOrderPaymentHistoryDAO>();
+            CustomerSalesOrderPromotions = new HashSet<CustomerSalesOrderPromotionDAO>();
+            CustomerSalesOrderTransactions = new HashSet<CustomerSalesOrderTransactionDAO>();
         }
 
         public long Id { get; set; }
@@ -68,5 +70,7 @@ namespace ELODIE.Models
         public virtual AppUserDAO SalesEmployee { get; set; }
         public virtual ICollection<CustomerSalesOrderContentDAO> CustomerSalesOrderContents { get; set; }
         public virtual ICollection<CustomerSalesOrderPaymentHistoryDAO> CustomerSalesOrderPaymentHistories { get; set; }
+        public virtual ICollection<CustomerSalesOrderPromotionDAO> CustomerSalesOrderPromotions { get; set; }
+        public virtual ICollection<CustomerSalesOrderTransactionDAO> CustomerSalesOrderTransactions { get; set; }
     }
 }

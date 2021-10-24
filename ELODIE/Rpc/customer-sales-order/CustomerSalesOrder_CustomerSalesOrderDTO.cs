@@ -61,6 +61,7 @@ namespace ELODIE.Rpc.customer_sales_order
         public CustomerSalesOrder_AppUserDTO SalesEmployee { get; set; }
         public List<CustomerSalesOrder_CustomerSalesOrderContentDTO> CustomerSalesOrderContents { get; set; }
         public List<CustomerSalesOrder_CustomerSalesOrderPaymentHistoryDTO> CustomerSalesOrderPaymentHistories { get; set; }
+        public List<CustomerSalesOrder_CustomerSalesOrderPromotionDTO> CustomerSalesOrderPromotions { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public CustomerSalesOrder_CustomerSalesOrderDTO() {}
@@ -119,6 +120,7 @@ namespace ELODIE.Rpc.customer_sales_order
             this.SalesEmployee = CustomerSalesOrder.SalesEmployee == null ? null : new CustomerSalesOrder_AppUserDTO(CustomerSalesOrder.SalesEmployee);
             this.CustomerSalesOrderContents = CustomerSalesOrder.CustomerSalesOrderContents?.Select(x => new CustomerSalesOrder_CustomerSalesOrderContentDTO(x)).ToList();
             this.CustomerSalesOrderPaymentHistories = CustomerSalesOrder.CustomerSalesOrderPaymentHistories?.Select(x => new CustomerSalesOrder_CustomerSalesOrderPaymentHistoryDTO(x)).ToList();
+            this.CustomerSalesOrderPromotions = CustomerSalesOrder.CustomerSalesOrderPromotions?.Select(x => new CustomerSalesOrder_CustomerSalesOrderPromotionDTO(x)).ToList();
             this.CreatedAt = CustomerSalesOrder.CreatedAt;
             this.UpdatedAt = CustomerSalesOrder.UpdatedAt;
             this.Errors = CustomerSalesOrder.Errors;

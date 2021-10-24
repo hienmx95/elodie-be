@@ -1,4 +1,4 @@
-using ELODIE.Common;
+﻿using ELODIE.Common;
 using ELODIE.Helpers;
 using System;
 using System.Collections.Generic;
@@ -94,6 +94,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 CustomerSalesOrder.OrganizationId = SalesEmployee.OrganizationId;
                 CustomerSalesOrder.Organization = SalesEmployee.Organization;
                 CustomerSalesOrder.RequestStateId = RequestStateEnum.NEW.Id;
+                await Calculator(CustomerSalesOrder);
                 await UOW.CustomerSalesOrderRepository.Create(CustomerSalesOrder);
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
                 CustomerSalesOrder.Code = $"ORDER{CustomerSalesOrder.Id}";
@@ -118,6 +119,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 var oldData = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
                 var AppUser = await UOW.AppUserRepository.Get(CustomerSalesOrder.SalesEmployeeId);
                 CustomerSalesOrder.OrganizationId = AppUser.OrganizationId;
+                await Calculator(CustomerSalesOrder);
                 await UOW.CustomerSalesOrderRepository.Update(CustomerSalesOrder);
 
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
@@ -129,6 +131,171 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 await Logging.CreateSystemLog(ex, nameof(CustomerSalesOrderService));
             }
             return null;
+        }
+
+        private async Task<CustomerSalesOrder> Calculator(CustomerSalesOrder CustomerSalesOrder)
+        {
+            var ProductIds = new List<long>();
+            var ItemIds = new List<long>();
+            if (CustomerSalesOrder.CustomerSalesOrderContents != null)
+            {
+                ProductIds.AddRange(CustomerSalesOrder.CustomerSalesOrderContents.Select(x => x.Item.ProductId).ToList());
+                ItemIds.AddRange(CustomerSalesOrder.CustomerSalesOrderContents.Select(x => x.ItemId).ToList());
+            }
+            ProductIds = ProductIds.Distinct().ToList();
+            ItemIds = ItemIds.Distinct().ToList();
+
+            ItemFilter ItemFilter = new ItemFilter
+            {
+                Skip = 0,
+                Take = ItemIds.Count,
+                Id = new IdFilter { In = ItemIds },
+                Selects = ItemSelect.ALL,
+            };
+            var Items = await UOW.ItemRepository.List(ItemFilter);
+
+            var Products = await UOW.ProductRepository.List(new ProductFilter
+            {
+                Id = new IdFilter { In = ProductIds },
+                Skip = 0,
+                Take = int.MaxValue,
+                Selects = ProductSelect.UnitOfMeasure | ProductSelect.UnitOfMeasureGrouping | ProductSelect.Id | ProductSelect.TaxType
+            });
+
+            var UOMGs = await UOW.UnitOfMeasureGroupingRepository.List(new UnitOfMeasureGroupingFilter
+            {
+                Skip = 0,
+                Take = int.MaxValue,
+                Selects = UnitOfMeasureGroupingSelect.Id | UnitOfMeasureGroupingSelect.UnitOfMeasure | UnitOfMeasureGroupingSelect.UnitOfMeasureGroupingContents
+            });
+
+            //sản phẩm bán
+            if (CustomerSalesOrder.CustomerSalesOrderContents != null)
+            {
+                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                {
+                    var Item = Items.Where(x => x.Id == CustomerSalesOrderContent.ItemId).FirstOrDefault();
+                    var Product = Products.Where(x => CustomerSalesOrderContent.Item.ProductId == x.Id).FirstOrDefault();
+                    CustomerSalesOrderContent.PrimaryUnitOfMeasureId = Product.UnitOfMeasureId;
+
+                    List<UnitOfMeasure> UnitOfMeasures = new List<UnitOfMeasure>();
+                    if (Product.UnitOfMeasureGroupingId.HasValue)
+                    {
+                        var UOMG = UOMGs.Where(x => x.Id == Product.UnitOfMeasureGroupingId).FirstOrDefault();
+                        UnitOfMeasures = UOMG.UnitOfMeasureGroupingContents.Select(x => new UnitOfMeasure
+                        {
+                            Id = x.UnitOfMeasure.Id,
+                            Code = x.UnitOfMeasure.Code,
+                            Name = x.UnitOfMeasure.Name,
+                            Description = x.UnitOfMeasure.Description,
+                            StatusId = x.UnitOfMeasure.StatusId,
+                            Factor = x.Factor
+                        }).ToList();
+                    }
+
+                    UnitOfMeasures.Add(new UnitOfMeasure
+                    {
+                        Id = Product.UnitOfMeasure.Id,
+                        Code = Product.UnitOfMeasure.Code,
+                        Name = Product.UnitOfMeasure.Name,
+                        Description = Product.UnitOfMeasure.Description,
+                        StatusId = Product.UnitOfMeasure.StatusId,
+                        Factor = 1
+                    });
+                    var UOM = UnitOfMeasures.Where(x => CustomerSalesOrderContent.UnitOfMeasureId == x.Id).FirstOrDefault();
+                    CustomerSalesOrderContent.RequestedQuantity = CustomerSalesOrderContent.Quantity * UOM.Factor.Value;
+
+                    //Trường hợp không sửa giá, giá bán = giá bán cơ sở của sản phẩm * hệ số quy đổi của đơn vị tính
+                    if (CustomerSalesOrder.EditedPriceStatusId == EditedPriceStatusEnum.INACTIVE.Id)
+                    {
+                        CustomerSalesOrderContent.PrimaryPrice = Item.SalePrice.GetValueOrDefault(0);
+                        CustomerSalesOrderContent.SalePrice = CustomerSalesOrderContent.PrimaryPrice * UOM.Factor.Value;
+                        CustomerSalesOrderContent.EditedPriceStatusId = EditedPriceStatusEnum.INACTIVE.Id;
+                    }
+
+                    if (CustomerSalesOrder.EditedPriceStatusId == EditedPriceStatusEnum.ACTIVE.Id)
+                    {
+                        CustomerSalesOrderContent.SalePrice = CustomerSalesOrderContent.PrimaryPrice * UOM.Factor.Value;
+                        if (Item.SalePrice == CustomerSalesOrderContent.PrimaryPrice)
+                            CustomerSalesOrderContent.EditedPriceStatusId = EditedPriceStatusEnum.INACTIVE.Id;
+                        else
+                            CustomerSalesOrderContent.EditedPriceStatusId = EditedPriceStatusEnum.ACTIVE.Id;
+                    }
+
+                    //giá tiền từng line trước chiết khấu
+                    var SubAmount = CustomerSalesOrderContent.Quantity * CustomerSalesOrderContent.SalePrice;
+                    if (CustomerSalesOrderContent.DiscountPercentage.HasValue)
+                    {
+                        CustomerSalesOrderContent.DiscountAmount = SubAmount * CustomerSalesOrderContent.DiscountPercentage.Value / 100;
+                        CustomerSalesOrderContent.DiscountAmount = Math.Round(CustomerSalesOrderContent.DiscountAmount ?? 0, 0);
+                        CustomerSalesOrderContent.Amount = SubAmount - CustomerSalesOrderContent.DiscountAmount.Value;
+                    }
+                    else
+                    {
+                        CustomerSalesOrderContent.Amount = SubAmount;
+                    }
+                }
+
+                //tổng trước chiết khấu
+                CustomerSalesOrder.SubTotal = CustomerSalesOrder.CustomerSalesOrderContents.Sum(x => x.Amount);
+
+                //tính tổng chiết khấu theo % chiết khấu chung
+                if (CustomerSalesOrder.GeneralDiscountPercentage.HasValue && CustomerSalesOrder.GeneralDiscountPercentage > 0)
+                {
+                    CustomerSalesOrder.GeneralDiscountAmount = CustomerSalesOrder.SubTotal * (CustomerSalesOrder.GeneralDiscountPercentage / 100);
+                    CustomerSalesOrder.GeneralDiscountAmount = Math.Round(CustomerSalesOrder.GeneralDiscountAmount.Value, 0);
+                }
+                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                {
+                    //phân bổ chiết khấu chung = tổng chiết khấu chung * (tổng từng line/tổng trc chiết khấu)
+                    CustomerSalesOrderContent.GeneralDiscountPercentage = CustomerSalesOrderContent.Amount / CustomerSalesOrder.SubTotal * 100;
+                    CustomerSalesOrderContent.GeneralDiscountAmount = CustomerSalesOrder.GeneralDiscountAmount * CustomerSalesOrderContent.GeneralDiscountPercentage / 100;
+                    CustomerSalesOrderContent.GeneralDiscountAmount = Math.Round(CustomerSalesOrderContent.GeneralDiscountAmount ?? 0, 0);
+                    //thuê từng line = (tổng từng line - chiết khấu phân bổ) * % thuế
+                    CustomerSalesOrderContent.TaxAmountOther = (CustomerSalesOrderContent.Amount - CustomerSalesOrderContent.GeneralDiscountAmount.GetValueOrDefault(0)) * CustomerSalesOrderContent.TaxPercentageOther / 100;
+                    CustomerSalesOrderContent.TaxAmount = (CustomerSalesOrderContent.Amount - CustomerSalesOrderContent.GeneralDiscountAmount.GetValueOrDefault(0) + CustomerSalesOrderContent.TaxAmountOther.GetValueOrDefault(0)) * CustomerSalesOrderContent.TaxPercentage / 100;
+                    //CustomerSalesOrderContent.TaxAmount = Math.Round(CustomerSalesOrderContent.TaxAmount ?? 0, 0);
+                }
+
+                CustomerSalesOrder.TotalTaxOther = CustomerSalesOrder.CustomerSalesOrderContents.Where(x => x.TaxAmountOther.HasValue).Select(x => x.TaxAmountOther.Value).Sum();
+                CustomerSalesOrder.TotalTaxOther = Math.Round(CustomerSalesOrder.TotalTaxOther, 0);
+                CustomerSalesOrder.TotalTax = CustomerSalesOrder.CustomerSalesOrderContents.Where(x => x.TaxAmount.HasValue).Select(x => x.TaxAmount.Value).Sum();
+                CustomerSalesOrder.TotalTax = Math.Round(CustomerSalesOrder.TotalTax, 0);
+                CustomerSalesOrder.Total = CustomerSalesOrder.SubTotal - CustomerSalesOrder.GeneralDiscountAmount.GetValueOrDefault(0) + CustomerSalesOrder.TotalTaxOther + CustomerSalesOrder.TotalTax;
+            }
+            else
+            {
+                CustomerSalesOrder.SubTotal = 0;
+                CustomerSalesOrder.GeneralDiscountPercentage = null;
+                CustomerSalesOrder.GeneralDiscountAmount = null;
+                CustomerSalesOrder.TotalTaxOther = 0;
+                CustomerSalesOrder.TotalTax = 0;
+                CustomerSalesOrder.Total = 0;
+            }
+
+            //Tiến độ thanh toán
+            if (CustomerSalesOrder.CustomerSalesOrderPaymentHistories != null)
+            {
+                foreach (CustomerSalesOrderPaymentHistory CustomerSalesOrderPaymentHistory in CustomerSalesOrder.CustomerSalesOrderPaymentHistories)
+                {
+                    CustomerSalesOrderPaymentHistory.PaymentAmount = CustomerSalesOrder.Total * CustomerSalesOrderPaymentHistory.PaymentPercentage;
+                }
+
+                var TotalPaymentPercentage = CustomerSalesOrder.CustomerSalesOrderPaymentHistories
+                    .Where(x => x.PaymentPercentage.HasValue)
+                    .Select(x => x.PaymentPercentage.Value).Sum();
+                if (TotalPaymentPercentage == 0)
+                    CustomerSalesOrder.OrderPaymentStatusId = OrderPaymentStatusEnum.UNPAID.Id;
+                if (TotalPaymentPercentage > 0 && TotalPaymentPercentage < 100)
+                    CustomerSalesOrder.OrderPaymentStatusId = OrderPaymentStatusEnum.PAIDING.Id;
+                if (TotalPaymentPercentage == 100)
+                    CustomerSalesOrder.OrderPaymentStatusId = OrderPaymentStatusEnum.PAID.Id;
+            }
+            else
+            {
+                CustomerSalesOrder.OrderPaymentStatusId = OrderPaymentStatusEnum.UNPAID.Id;
+            }
+            return CustomerSalesOrder;
         }
 
         public async Task<CustomerSalesOrder> Delete(CustomerSalesOrder CustomerSalesOrder)

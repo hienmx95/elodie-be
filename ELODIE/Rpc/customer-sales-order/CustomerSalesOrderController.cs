@@ -1760,6 +1760,51 @@ namespace ELODIE.Rpc.customer_sales_order
                         RowId = x.PaymentType.RowId,
                     },
                 }).ToList();
+            CustomerSalesOrder.CustomerSalesOrderPromotions = CustomerSalesOrder_CustomerSalesOrderDTO.CustomerSalesOrderPromotions?
+                .Select(x => new CustomerSalesOrderPromotion
+                {
+                    Id = x.Id,
+                    ItemId = x.ItemId,
+                    UnitOfMeasureId = x.UnitOfMeasureId,
+                    Quantity = x.Quantity,
+                    RequestedQuantity = x.RequestedQuantity,
+                    PrimaryUnitOfMeasureId = x.PrimaryUnitOfMeasureId,
+                    Factor = x.Factor,
+                    Note = x.Note,
+                    Item = x.Item == null ? null : new Item
+                    {
+                        Id = x.Item.Id,
+                        ProductId = x.Item.ProductId,
+                        Code = x.Item.Code,
+                        Name = x.Item.Name,
+                        ScanCode = x.Item.ScanCode,
+                        SalePrice = x.Item.SalePrice,
+                        RetailPrice = x.Item.RetailPrice,
+                        StatusId = x.Item.StatusId,
+                        Used = x.Item.Used,
+                        RowId = x.Item.RowId,
+                    },
+                    PrimaryUnitOfMeasure = x.PrimaryUnitOfMeasure == null ? null : new UnitOfMeasure
+                    {
+                        Id = x.PrimaryUnitOfMeasure.Id,
+                        Code = x.PrimaryUnitOfMeasure.Code,
+                        Name = x.PrimaryUnitOfMeasure.Name,
+                        Description = x.PrimaryUnitOfMeasure.Description,
+                        StatusId = x.PrimaryUnitOfMeasure.StatusId,
+                        Used = x.PrimaryUnitOfMeasure.Used,
+                        RowId = x.PrimaryUnitOfMeasure.RowId,
+                    },
+                    UnitOfMeasure = x.UnitOfMeasure == null ? null : new UnitOfMeasure
+                    {
+                        Id = x.UnitOfMeasure.Id,
+                        Code = x.UnitOfMeasure.Code,
+                        Name = x.UnitOfMeasure.Name,
+                        Description = x.UnitOfMeasure.Description,
+                        StatusId = x.UnitOfMeasure.StatusId,
+                        Used = x.UnitOfMeasure.Used,
+                        RowId = x.UnitOfMeasure.RowId,
+                    },
+                }).ToList();
             CustomerSalesOrder.BaseLanguage = CurrentContext.Language;
             return CustomerSalesOrder;
         }

@@ -61,6 +61,7 @@ namespace ELODIE.Entities
         public AppUser SalesEmployee { get; set; }
         public List<CustomerSalesOrderContent> CustomerSalesOrderContents { get; set; }
         public List<CustomerSalesOrderPaymentHistory> CustomerSalesOrderPaymentHistories { get; set; }
+        public List<CustomerSalesOrderPromotion> CustomerSalesOrderPromotions { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -120,7 +120,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
 
         private async Task<bool> ValidateRequestState(CustomerSalesOrder CustomerSalesOrder)
         {
-            if (CustomerSalesOrder.RequestStateId != null)
+            if (CustomerSalesOrder.RequestStateId != null && CustomerSalesOrder.Total != 0)
             {
                 if (CustomerSalesOrder.OrderPaymentStatusId != OrderPaymentStatusEnum.PAID.Id && CustomerSalesOrder.RequestStateId == RequestStateEnum.COMPLETED.Id)
                 {
@@ -255,7 +255,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
             }
             else
             {
-                if (CustomerSalesOrder.CustomerSalesOrderContents == null || !CustomerSalesOrder.CustomerSalesOrderContents.Any())
+                if (CustomerSalesOrder.CustomerSalesOrderPromotions == null || !CustomerSalesOrder.CustomerSalesOrderPromotions.Any())
                 {
                     CustomerSalesOrder.AddError(nameof(CustomerSalesOrderValidator), nameof(CustomerSalesOrder.Id), ErrorCode.ContentEmpty);
                 }
@@ -264,6 +264,62 @@ namespace ELODIE.Services.MCustomerSalesOrder
             return CustomerSalesOrder.IsValidated;
         }
 
+        private async Task<bool> ValidatePromotion(CustomerSalesOrder CustomerSalesOrder)
+        {
+            if (CustomerSalesOrder.CustomerSalesOrderPromotions != null)
+            {
+                await ValidateItem(CustomerSalesOrder);
+                //validate đơn vị tính sản phẩm khuyến mãi
+                var Ids = CustomerSalesOrder.CustomerSalesOrderPromotions.Select(x => x.UnitOfMeasureId).ToList();
+                var UnitOfMeasureFilter = new UnitOfMeasureFilter
+                {
+                    Skip = 0,
+                    Take = int.MaxValue,
+                    Id = new IdFilter { In = Ids },
+                    StatusId = new IdFilter { Equal = Enums.StatusEnum.ACTIVE.Id },
+                    Selects = UnitOfMeasureSelect.Id
+                };
+
+                var listIdsInDB = (await UOW.UnitOfMeasureRepository.List(UnitOfMeasureFilter)).Select(x => x.Id);
+                var listIdsNotExisted = Ids.Except(listIdsInDB);
+
+                foreach (var CustomerSalesOrderPromotion in CustomerSalesOrder.CustomerSalesOrderPromotions)
+                {
+                    if (listIdsNotExisted.Contains(CustomerSalesOrderPromotion.UnitOfMeasureId))
+                        CustomerSalesOrderPromotion.AddError(nameof(CustomerSalesOrderValidator), nameof(CustomerSalesOrderPromotion.UnitOfMeasure), ErrorCode.UnitOfMeasureEmpty);
+                    //validate số lượng
+                    if (CustomerSalesOrderPromotion.Quantity <= 0)
+                        CustomerSalesOrderPromotion.AddError(nameof(CustomerSalesOrderValidator), nameof(CustomerSalesOrderPromotion.Quantity), ErrorCode.QuantityEmpty);
+                }
+
+            }
+            return CustomerSalesOrder.IsValidated;
+        }
+        private async Task<bool> ValidateItem(CustomerSalesOrder CustomerSalesOrder)
+        {
+
+            if (CustomerSalesOrder.CustomerSalesOrderPromotions != null)
+            {
+                var Ids = CustomerSalesOrder.CustomerSalesOrderPromotions.Select(x => x.ItemId).ToList();
+                var ItemFilter = new ItemFilter
+                {
+                    Skip = 0,
+                    Take = int.MaxValue,
+                    Id = new IdFilter { In = Ids },
+                    StatusId = new IdFilter { Equal = Enums.StatusEnum.ACTIVE.Id },
+                    Selects = ItemSelect.Id
+                };
+
+                var listIdsInDB = (await UOW.ItemRepository.List(ItemFilter)).Select(x => x.Id);
+                var listIdsNotExisted = Ids.Except(listIdsInDB);
+                foreach (var CustomerSalesOrderPromotion in CustomerSalesOrder.CustomerSalesOrderPromotions)
+                {
+                    if (listIdsNotExisted.Contains(CustomerSalesOrderPromotion.ItemId))
+                        CustomerSalesOrderPromotion.AddError(nameof(CustomerSalesOrderValidator), nameof(CustomerSalesOrderPromotion.Item), ErrorCode.ItemNotExisted);
+                }
+            }
+            return CustomerSalesOrder.IsValidated;
+        }
         private async Task<bool> ValidateAddress(CustomerSalesOrder CustomerSalesOrder)
         {
             if (string.IsNullOrWhiteSpace(CustomerSalesOrder.DeliveryAddress))
@@ -317,6 +373,8 @@ namespace ELODIE.Services.MCustomerSalesOrder
             await ValidateDeliveryDate(CustomerSalesOrder);
             await ValidateAddress(CustomerSalesOrder);
             await ValidateContent(CustomerSalesOrder);
+            await ValidatePromotion(CustomerSalesOrder);
+            await ValidateItem(CustomerSalesOrder);
             await ValidateEditedPrice(CustomerSalesOrder);
             await ValidatePaymentHistory(CustomerSalesOrder);
             await ValidateOrderSource(CustomerSalesOrder);
@@ -333,6 +391,8 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 await ValidateDeliveryDate(CustomerSalesOrder);
                 await ValidateAddress(CustomerSalesOrder);
                 await ValidateContent(CustomerSalesOrder);
+                await ValidatePromotion(CustomerSalesOrder);
+                await ValidateItem(CustomerSalesOrder);
                 await ValidateEditedPrice(CustomerSalesOrder);
                 await ValidatePaymentHistory(CustomerSalesOrder);
                 await ValidateOrderSource(CustomerSalesOrder);

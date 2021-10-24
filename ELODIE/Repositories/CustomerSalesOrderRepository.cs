@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Thinktecture;
 using Thinktecture.EntityFrameworkCore.TempTables;
+using ELODIE.Enums;
 
 namespace ELODIE.Repositories
 {
@@ -1344,6 +1345,54 @@ namespace ELODIE.Repositories
                     },
                 }).ToListAsync();
 
+            CustomerSalesOrder.CustomerSalesOrderPromotions = await DataContext.CustomerSalesOrderPromotion.AsNoTracking()
+                .Where(x => x.CustomerSalesOrderId == CustomerSalesOrder.Id)
+                .Select(x => new CustomerSalesOrderPromotion
+                {
+                    Id = x.Id,
+                    CustomerSalesOrderId = x.CustomerSalesOrderId,
+                    ItemId = x.ItemId,
+                    UnitOfMeasureId = x.UnitOfMeasureId,
+                    Quantity = x.Quantity,
+                    RequestedQuantity = x.RequestedQuantity,
+                    PrimaryUnitOfMeasureId = x.PrimaryUnitOfMeasureId,
+                    Factor = x.Factor,
+                    Note = x.Note,
+                    Item = new Item
+                    {
+                        Id = x.Item.Id,
+                        ProductId = x.Item.ProductId,
+                        Code = x.Item.Code,
+                        Name = x.Item.Name,
+                        ScanCode = x.Item.ScanCode,
+                        SalePrice = x.Item.SalePrice,
+                        RetailPrice = x.Item.RetailPrice,
+                        StatusId = x.Item.StatusId,
+                        Used = x.Item.Used,
+                        RowId = x.Item.RowId,
+                    },
+                    PrimaryUnitOfMeasure = new UnitOfMeasure
+                    {
+                        Id = x.PrimaryUnitOfMeasure.Id,
+                        Code = x.PrimaryUnitOfMeasure.Code,
+                        Name = x.PrimaryUnitOfMeasure.Name,
+                        Description = x.PrimaryUnitOfMeasure.Description,
+                        StatusId = x.PrimaryUnitOfMeasure.StatusId,
+                        Used = x.PrimaryUnitOfMeasure.Used,
+                        RowId = x.PrimaryUnitOfMeasure.RowId,
+                    },
+                    UnitOfMeasure = new UnitOfMeasure
+                    {
+                        Id = x.UnitOfMeasure.Id,
+                        Code = x.UnitOfMeasure.Code,
+                        Name = x.UnitOfMeasure.Name,
+                        Description = x.UnitOfMeasure.Description,
+                        StatusId = x.UnitOfMeasure.StatusId,
+                        Used = x.UnitOfMeasure.Used,
+                        RowId = x.UnitOfMeasure.RowId,
+                    },
+                }).ToListAsync();
+
             return CustomerSalesOrder;
         }
         
@@ -1538,6 +1587,74 @@ namespace ELODIE.Repositories
                 }
                 await DataContext.CustomerSalesOrderContent.BulkMergeAsync(CustomerSalesOrderContentDAOs);
             }
+
+            await DataContext.CustomerSalesOrderPromotion
+                .Where(x => x.CustomerSalesOrderId == CustomerSalesOrder.Id)
+                .DeleteFromQueryAsync();
+            List<CustomerSalesOrderPromotionDAO> CustomerSalesOrderPromotionDAOs = new List<CustomerSalesOrderPromotionDAO>();
+            if (CustomerSalesOrder.CustomerSalesOrderPromotions != null)
+            {
+                foreach (CustomerSalesOrderPromotion CustomerSalesOrderPromotion in CustomerSalesOrder.CustomerSalesOrderPromotions)
+                {
+                    CustomerSalesOrderPromotionDAO CustomerSalesOrderPromotionDAO = new CustomerSalesOrderPromotionDAO();
+                    CustomerSalesOrderPromotionDAO.Id = CustomerSalesOrderPromotion.Id;
+                    CustomerSalesOrderPromotionDAO.CustomerSalesOrderId = CustomerSalesOrder.Id;
+                    CustomerSalesOrderPromotionDAO.ItemId = CustomerSalesOrderPromotion.ItemId;
+                    CustomerSalesOrderPromotionDAO.UnitOfMeasureId = CustomerSalesOrderPromotion.UnitOfMeasureId;
+                    CustomerSalesOrderPromotionDAO.Quantity = CustomerSalesOrderPromotion.Quantity;
+                    CustomerSalesOrderPromotionDAO.RequestedQuantity = CustomerSalesOrderPromotion.RequestedQuantity;
+                    CustomerSalesOrderPromotionDAO.PrimaryUnitOfMeasureId = CustomerSalesOrderPromotion.PrimaryUnitOfMeasureId;
+                    CustomerSalesOrderPromotionDAO.Factor = CustomerSalesOrderPromotion.Factor;
+                    CustomerSalesOrderPromotionDAO.Note = CustomerSalesOrderPromotion.Note;
+                    CustomerSalesOrderPromotionDAOs.Add(CustomerSalesOrderPromotionDAO);
+                }
+                await DataContext.CustomerSalesOrderPromotion.BulkMergeAsync(CustomerSalesOrderPromotionDAOs);
+            }   
+
+            await DataContext.CustomerSalesOrderTransaction.Where(x => x.CustomerSalesOrderId == CustomerSalesOrder.Id).DeleteFromQueryAsync();
+            List<CustomerSalesOrderTransactionDAO> CustomerSalesOrderTransactionDAOs = new List<CustomerSalesOrderTransactionDAO>();
+            if (CustomerSalesOrder.CustomerSalesOrderContents != null)
+            {
+                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                {
+                    CustomerSalesOrderTransactionDAO CustomerSalesOrderTransactionDAO = new CustomerSalesOrderTransactionDAO
+                    {
+                        CustomerSalesOrderId = CustomerSalesOrder.Id,
+                        ItemId = CustomerSalesOrderContent.ItemId,
+                        OrganizationId = CustomerSalesOrder.OrganizationId,
+                        SalesEmployeeId = CustomerSalesOrder.SalesEmployeeId,
+                        OrderDate = CustomerSalesOrder.OrderDate,
+                        TypeId = TransactionTypeEnum.SALES_CONTENT.Id,
+                        UnitOfMeasureId = CustomerSalesOrderContent.PrimaryUnitOfMeasureId,
+                        Quantity = CustomerSalesOrderContent.RequestedQuantity,
+                        Revenue = CustomerSalesOrderContent.Amount - (CustomerSalesOrderContent.GeneralDiscountAmount ?? 0) + (CustomerSalesOrderContent.TaxAmount ?? 0),
+                        Discount = (CustomerSalesOrderContent.DiscountAmount ?? 0) + (CustomerSalesOrderContent.GeneralDiscountAmount ?? 0)
+                    };
+                    CustomerSalesOrderTransactionDAOs.Add(CustomerSalesOrderTransactionDAO);
+                }
+            }
+
+            if (CustomerSalesOrder.CustomerSalesOrderPromotions != null)
+            {
+                foreach (var CustomerSalesOrderPromotion in CustomerSalesOrder.CustomerSalesOrderPromotions)
+                {
+                    CustomerSalesOrderTransactionDAO CustomerSalesOrderTransactionDAO = new CustomerSalesOrderTransactionDAO
+                    {
+                        CustomerSalesOrderId = CustomerSalesOrder.Id,
+                        ItemId = CustomerSalesOrderPromotion.ItemId,
+                        OrganizationId = CustomerSalesOrder.OrganizationId,
+                        SalesEmployeeId = CustomerSalesOrder.SalesEmployeeId,
+                        OrderDate = CustomerSalesOrder.OrderDate,
+                        TypeId = TransactionTypeEnum.PROMOTION.Id,
+                        UnitOfMeasureId = CustomerSalesOrderPromotion.PrimaryUnitOfMeasureId,
+                        Quantity = CustomerSalesOrderPromotion.RequestedQuantity,
+                    };
+                    CustomerSalesOrderTransactionDAOs.Add(CustomerSalesOrderTransactionDAO);
+                }
+            }
+
+            await DataContext.CustomerSalesOrderTransaction.BulkMergeAsync(CustomerSalesOrderTransactionDAOs);
+
             List<CustomerSalesOrderPaymentHistoryDAO> CustomerSalesOrderPaymentHistoryDAOs = await DataContext.CustomerSalesOrderPaymentHistory
                 .Where(x => x.CustomerSalesOrderId == CustomerSalesOrder.Id).ToListAsync();
             CustomerSalesOrderPaymentHistoryDAOs.ForEach(x => x.DeletedAt = StaticParams.DateTimeNow);
