@@ -87,6 +87,7 @@ namespace ELODIE.Services.MProduct
                 };
             }
         }
+
         public async Task<Item> Get(long Id)
         {
             var appUser = await UOW.AppUserRepository.Get(CurrentContext.UserId);

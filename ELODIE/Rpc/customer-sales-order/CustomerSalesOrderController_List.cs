@@ -59,10 +59,17 @@ namespace ELODIE.Rpc.customer_sales_order
             ItemFilter.StatusId = new IdFilter { Equal = StatusEnum.ACTIVE.Id };
             ItemFilter = ItemService.ToFilter(ItemFilter);
 
-            List<Item> Items = await ItemService.List(ItemFilter);
-            List<CustomerSalesOrder_ItemDTO> CustomerSalesOrder_ItemDTOs = Items
-                .Select(x => new CustomerSalesOrder_ItemDTO(x)).ToList();
-            return CustomerSalesOrder_ItemDTOs;
+            if (CustomerSalesOrder_ItemFilterDTO.SalesEmployeeId == null && CustomerSalesOrder_ItemFilterDTO.SalesEmployeeId.HasValue == false)
+            {
+                return new List<CustomerSalesOrder_ItemDTO>();
+            }
+            else
+            {
+                List<Item> Items = await CustomerSalesOrderService.ListItem(ItemFilter, CustomerSalesOrder_ItemFilterDTO.SalesEmployeeId.Equal);
+                List<CustomerSalesOrder_ItemDTO> CustomerSalesOrder_ItemDTOs = Items
+                    .Select(x => new CustomerSalesOrder_ItemDTO(x)).ToList();
+                return CustomerSalesOrder_ItemDTOs;
+            }
         }
         [Route(CustomerSalesOrderRoute.CountItem), HttpPost]
         public async Task<long> CountItem([FromBody] CustomerSalesOrder_ItemFilterDTO CustomerSalesOrder_ItemFilterDTO)

@@ -89,8 +89,8 @@ namespace ELODIE.Services.MWarehouse
             try
             {
                 Warehouse.Code = "";
-                var CurrentUser = await UOW.AppUserRepository.Get(CurrentContext.UserId);
-                Warehouse.OrganizationId = CurrentUser.OrganizationId;
+                //var CurrentUser = await UOW.AppUserRepository.Get(CurrentContext.UserId);
+                //Warehouse.OrganizationId = CurrentUser.OrganizationId;
                 await UOW.WarehouseRepository.Create(Warehouse);
                 Warehouse = await UOW.WarehouseRepository.Get(Warehouse.Id);
                 Warehouse.Code = $"WH{Warehouse.Id}";

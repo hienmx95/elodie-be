@@ -13,7 +13,7 @@ namespace ELODIE.Rpc.warehouse
         public long AlternateUnitOfMeasureId { get; set; }
         public decimal AlternateQuantity { get; set; }
         public long UnitOfMeasureId { get; set; }
-        public decimal Quantity { get; set; }
+        public long Quantity { get; set; }
         public Warehouse_UnitOfMeasureDTO AlternateUnitOfMeasure { get; set; }   
         public Warehouse_ItemDTO Item { get; set; }   
         public Warehouse_UnitOfMeasureDTO UnitOfMeasure { get; set; }   

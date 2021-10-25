@@ -23,6 +23,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
         Task<List<CustomerSalesOrder>> BulkDelete(List<CustomerSalesOrder> CustomerSalesOrders);
         Task<List<CustomerSalesOrder>> Import(List<CustomerSalesOrder> CustomerSalesOrders);
         Task<CustomerSalesOrderFilter> ToFilter(CustomerSalesOrderFilter CustomerSalesOrderFilter);
+        Task<List<Item>> ListItem(ItemFilter ItemFilter, long? SalesEmployeeId);
     }
 
     public class CustomerSalesOrderService : BaseService, ICustomerSalesOrderService
@@ -72,6 +73,63 @@ namespace ELODIE.Services.MCustomerSalesOrder
             return null;
         }
 
+        public async Task<List<Item>> ListItem(ItemFilter ItemFilter, long? SalesEmployeeId)
+        {
+            try
+            {
+                AppUser AppUser = await UOW.AppUserRepository.Get(SalesEmployeeId.Value);
+                List<Item> Items = await UOW.ItemRepository.List(ItemFilter);
+                var Ids = Items.Select(x => x.Id).ToList();
+
+                if (AppUser != null)
+                {
+                    List<Warehouse> Warehouses = await UOW.WarehouseRepository.List(new WarehouseFilter
+                    {
+                        Skip = 0,
+                        Take = int.MaxValue,
+                        Selects = WarehouseSelect.Id,
+                        StatusId = new IdFilter { Equal = StatusEnum.ACTIVE.Id },
+                        OrganizationId = new IdFilter { Equal = AppUser.OrganizationId }
+                    });
+                    var WarehouseIds = Warehouses.Select(x => x.Id).ToList();
+
+                    InventoryFilter InventoryFilter = new InventoryFilter
+                    {
+                        Skip = 0,
+                        Take = int.MaxValue,
+                        ItemId = new IdFilter { In = Ids },
+                        WarehouseId = new IdFilter { In = WarehouseIds },
+                        Selects = InventorySelect.Quantity | InventorySelect.Item
+                    };
+
+                    var inventories = await UOW.InventoryRepository.List(InventoryFilter);
+                    var list = inventories.GroupBy(x => x.ItemId).Select(x => new { ItemId = x.Key, SaleStock = x.Sum(s => s.Quantity) }).ToList();
+
+                    foreach (var item in Items)
+                    {
+                        item.SaleStock = list.Where(i => i.ItemId == item.Id).Select(i => i.SaleStock).FirstOrDefault();
+                        item.HasInventory = item.SaleStock > 0;
+                    }
+
+                }
+
+                return Items;
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException == null)
+                {
+                    await Logging.CreateSystemLog(ex, nameof(CustomerSalesOrderService));
+                    throw new MessageException(ex);
+                }
+                else
+                {
+                    await Logging.CreateSystemLog(ex, nameof(CustomerSalesOrderService));
+                    throw new MessageException(ex.InnerException);
+                }
+            }
+        }
+
         public async Task<CustomerSalesOrder> Get(long Id)
         {
             CustomerSalesOrder CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(Id);
@@ -97,6 +155,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 await Calculator(CustomerSalesOrder);
                 await UOW.CustomerSalesOrderRepository.Create(CustomerSalesOrder);
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
+                //await CalculatorInventory(CustomerSalesOrder);
                 CustomerSalesOrder.Code = $"ORDER{CustomerSalesOrder.Id}";
                 await UOW.CustomerSalesOrderRepository.Update(CustomerSalesOrder);
                 await Logging.CreateAuditLog(CustomerSalesOrder, new { }, nameof(CustomerSalesOrderService));
@@ -121,8 +180,8 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 CustomerSalesOrder.OrganizationId = AppUser.OrganizationId;
                 await Calculator(CustomerSalesOrder);
                 await UOW.CustomerSalesOrderRepository.Update(CustomerSalesOrder);
-
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
+                //await CalculatorInventory(CustomerSalesOrder);
                 await Logging.CreateAuditLog(CustomerSalesOrder, oldData, nameof(CustomerSalesOrderService));
                 return CustomerSalesOrder;
             }
@@ -133,6 +192,59 @@ namespace ELODIE.Services.MCustomerSalesOrder
             return null;
         }
 
+        private async Task<CustomerSalesOrder> CalculatorInventory(CustomerSalesOrder CustomerSalesOrder)
+        {
+            var SalesEmployee = await UOW.AppUserRepository.Get(CustomerSalesOrder.SalesEmployeeId);
+            var ItemIds = new List<long>();
+            if (CustomerSalesOrder.CustomerSalesOrderContents != null)
+            {
+                ItemIds.AddRange(CustomerSalesOrder.CustomerSalesOrderContents.Select(x => x.ItemId).ToList());
+            }
+            ItemIds = ItemIds.Distinct().ToList();
+            ItemFilter ItemFilter = new ItemFilter
+            {
+                Skip = 0,
+                Take = ItemIds.Count,
+                Id = new IdFilter { In = ItemIds },
+                Selects = ItemSelect.ALL,
+            };
+            var Items = await UOW.ItemRepository.List(ItemFilter);
+
+            var Ids = Items.Select(x => x.Id).ToList();
+
+            if (SalesEmployee != null)
+            {
+                List<Warehouse> Warehouses = await UOW.WarehouseRepository.List(new WarehouseFilter
+                {
+                    Skip = 0,
+                    Take = int.MaxValue,
+                    Selects = WarehouseSelect.Id,
+                    StatusId = new IdFilter { Equal = StatusEnum.ACTIVE.Id },
+                    OrganizationId = new IdFilter { Equal = SalesEmployee.OrganizationId }
+                });
+                var WarehouseId = Warehouses.Select(x => x.Id).FirstOrDefault();
+                InventoryFilter InventoryFilter = new InventoryFilter
+                {
+                    Skip = 0,
+                    Take = int.MaxValue,
+                    ItemId = new IdFilter { In = Ids },
+                    WarehouseId = new IdFilter { Equal = WarehouseId },
+                    Selects = InventorySelect.Quantity | InventorySelect.Item
+                };
+
+                var inventories = await UOW.InventoryRepository.List(InventoryFilter);
+
+                foreach (var inventory in inventories)
+                {
+                    inventory.Quantity = CustomerSalesOrder.CustomerSalesOrderContents.Where(i => i.ItemId == inventory.ItemId).Select(i => i.RequestedQuantity).FirstOrDefault();
+                }
+
+                await UOW.InventoryRepository.BulkMerge(inventories);
+
+            }
+
+            return CustomerSalesOrder;
+        }
         private async Task<CustomerSalesOrder> Calculator(CustomerSalesOrder CustomerSalesOrder)
         {
             var ProductIds = new List<long>();

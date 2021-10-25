@@ -1104,8 +1104,6 @@ namespace ELODIE.Models
 
             modelBuilder.Entity<InventoryDAO>(entity =>
             {
-                entity.HasKey(e => new { e.WarehouseId, e.ItemId, e.AlternateUnitOfMeasureId });
-
                 entity.ToTable("Inventory", "MDM");
 
                 entity.Property(e => e.AlternateQuantity).HasColumnType("decimal(20, 4)");
@@ -1113,8 +1111,6 @@ namespace ELODIE.Models
                 entity.Property(e => e.CreatedAt).HasColumnType("datetime");
 
                 entity.Property(e => e.DeletedAt).HasColumnType("datetime");
-
-                entity.Property(e => e.Quantity).HasColumnType("decimal(20, 4)");
 
                 entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
 

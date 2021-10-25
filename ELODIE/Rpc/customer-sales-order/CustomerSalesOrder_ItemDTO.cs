@@ -22,11 +22,15 @@ namespace ELODIE.Rpc.customer_sales_order
         public decimal? SalePrice { get; set; }
         
         public decimal? RetailPrice { get; set; }
-        
+
+        public long SaleStock { get; set; }
+
         public long StatusId { get; set; }
         
         public bool Used { get; set; }
-        
+
+        public bool HasInventory { get; set; }
+
         public Guid RowId { get; set; }
         public CustomerSalesOrder_ProductDTO Product { get; set; }
 
@@ -51,8 +55,13 @@ namespace ELODIE.Rpc.customer_sales_order
             this.StatusId = Item.StatusId;
             
             this.Used = Item.Used;
-            
+
+            this.HasInventory = Item.HasInventory;
+
+            this.SaleStock = Item.SaleStock;
+
             this.RowId = Item.RowId;
+
             this.Product = Item.Product == null ? null : new CustomerSalesOrder_ProductDTO(Item.Product);
             
             this.Errors = Item.Errors;
@@ -82,6 +91,7 @@ namespace ELODIE.Rpc.customer_sales_order
         public IdFilter ProductGroupingId { get; set; }
         public IdFilter ProductTypeId { get; set; }
         public StringFilter OtherName { get; set; }
+        public IdFilter SalesEmployeeId { get; set; }
         public ItemOrder OrderBy { get; set; }
     }
 }

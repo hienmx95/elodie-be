@@ -8,12 +8,13 @@ namespace ELODIE.Entities
 {
     public class Inventory : DataEntity,  IEquatable<Inventory>
     {
+        public long Id { get; set; }
         public long WarehouseId { get; set; }
         public long ItemId { get; set; }
         public long AlternateUnitOfMeasureId { get; set; }
         public decimal AlternateQuantity { get; set; }
         public long UnitOfMeasureId { get; set; }
-        public decimal Quantity { get; set; }
+        public long Quantity { get; set; }
         public UnitOfMeasure AlternateUnitOfMeasure { get; set; }
         public Item Item { get; set; }
         public UnitOfMeasure UnitOfMeasure { get; set; }
@@ -25,6 +26,7 @@ namespace ELODIE.Entities
         public bool Equals(Inventory other)
         {
             if (other == null) return false;
+            if (this.Id != other.Id) return false;
             if (this.WarehouseId != other.WarehouseId) return false;
             if (this.ItemId != other.ItemId) return false;
             if (this.AlternateUnitOfMeasureId != other.AlternateUnitOfMeasureId) return false;
@@ -41,12 +43,13 @@ namespace ELODIE.Entities
 
     public class InventoryFilter : FilterEntity
     {
+        public IdFilter Id { get; set; }
         public IdFilter WarehouseId { get; set; }
         public IdFilter ItemId { get; set; }
         public IdFilter AlternateUnitOfMeasureId { get; set; }
         public DecimalFilter AlternateQuantity { get; set; }
         public IdFilter UnitOfMeasureId { get; set; }
-        public DecimalFilter Quantity { get; set; }
+        public LongFilter Quantity { get; set; }
         public DateFilter CreatedAt { get; set; }
         public DateFilter UpdatedAt { get; set; }
         public List<InventoryFilter> OrFilter { get; set; }
@@ -57,12 +60,13 @@ namespace ELODIE.Entities
     [JsonConverter(typeof(StringEnumConverter))]
     public enum InventoryOrder
     {
-        Warehouse = 0,
-        Item = 1,
-        AlternateUnitOfMeasure = 2,
-        AlternateQuantity = 3,
-        UnitOfMeasure = 4,
-        Quantity = 5,
+        Id = 0,
+        Warehouse = 1,
+        Item = 2,
+        AlternateUnitOfMeasure = 3,
+        AlternateQuantity = 4,
+        UnitOfMeasure = 5,
+        Quantity = 6,
         CreatedAt = 50,
         UpdatedAt = 51,
     }
@@ -71,11 +75,12 @@ namespace ELODIE.Entities
     public enum InventorySelect:long
     {
         ALL = E.ALL,
-        Warehouse = E._0,
-        Item = E._1,
-        AlternateUnitOfMeasure = E._2,
-        AlternateQuantity = E._3,
-        UnitOfMeasure = E._4,
-        Quantity = E._5,
+        Id = E._0,
+        Warehouse = E._1,
+        Item = E._2,
+        AlternateUnitOfMeasure = E._3,
+        AlternateQuantity = E._4,
+        UnitOfMeasure = E._5,
+        Quantity = E._6,
     }
 }

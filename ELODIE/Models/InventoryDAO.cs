@@ -5,12 +5,13 @@ namespace ELODIE.Models
 {
     public partial class InventoryDAO
     {
+        public long Id { get; set; }
         public long WarehouseId { get; set; }
         public long ItemId { get; set; }
         public long AlternateUnitOfMeasureId { get; set; }
         public decimal AlternateQuantity { get; set; }
         public long UnitOfMeasureId { get; set; }
-        public decimal Quantity { get; set; }
+        public long Quantity { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
