@@ -103,7 +103,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
                     };
 
                     var inventories = await UOW.InventoryRepository.List(InventoryFilter);
-                    var list = inventories.GroupBy(x => x.ItemId).Select(x => new { ItemId = x.Key, SaleStock = x.Sum(s => s.Quantity) }).ToList();
+                    var list = inventories.GroupBy(x => x.ItemId).Select(x => new { ItemId = x.Key, SaleStock = x.Sum(s => s.Quantity) - x.Sum(s => s.PendingQuantity)}).ToList();
 
                     foreach (var item in Items)
                     {
