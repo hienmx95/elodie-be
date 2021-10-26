@@ -130,6 +130,13 @@ namespace ELODIE.Services.MCustomerSalesOrder
             }
         }
 
+        public async Task<bool> HasOutOfStock(long WarehouseId, CustomerSalesOrderContent CustomerSalesOrderContent)
+        {
+            var inventory = await UOW.InventoryRepository.GetByWarehouseAndItem(WarehouseId, CustomerSalesOrderContent.ItemId);
+           
+            return (inventory.Quantity - inventory.PendingQuantity - CustomerSalesOrderContent.RequestedQuantity) > 0;
+        }
+
         public async Task<CustomerSalesOrder> Get(long Id)
         {
             CustomerSalesOrder CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(Id);
@@ -153,9 +160,22 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 CustomerSalesOrder.Organization = SalesEmployee.Organization;
                 CustomerSalesOrder.RequestStateId = RequestStateEnum.NEW.Id;
                 await Calculator(CustomerSalesOrder);
+                List<Warehouse> Warehouses = await UOW.WarehouseRepository.List(new WarehouseFilter
+                {
+                    Skip = 0,
+                    Take = int.MaxValue,
+                    Selects = WarehouseSelect.Id,
+                    StatusId = new IdFilter { Equal = StatusEnum.ACTIVE.Id },
+                    OrganizationId = new IdFilter { Equal = SalesEmployee.OrganizationId }
+                });
+                var WarehouseId = Warehouses.Select(x => x.Id).FirstOrDefault();
+                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                {
+                    await AddPending(WarehouseId, CustomerSalesOrderContent);
+                }
+
                 await UOW.CustomerSalesOrderRepository.Create(CustomerSalesOrder);
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
-                //await CalculatorInventory(CustomerSalesOrder);
                 CustomerSalesOrder.Code = $"ORDER{CustomerSalesOrder.Id}";
                 await UOW.CustomerSalesOrderRepository.Update(CustomerSalesOrder);
                 await Logging.CreateAuditLog(CustomerSalesOrder, new { }, nameof(CustomerSalesOrderService));
@@ -176,12 +196,40 @@ namespace ELODIE.Services.MCustomerSalesOrder
             {
                 var CurrentUser = await UOW.AppUserRepository.Get(CurrentContext.UserId);
                 var oldData = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
-                var AppUser = await UOW.AppUserRepository.Get(CustomerSalesOrder.SalesEmployeeId);
-                CustomerSalesOrder.OrganizationId = AppUser.OrganizationId;
+                var SalesEmployee = await UOW.AppUserRepository.Get(CustomerSalesOrder.SalesEmployeeId);
+                CustomerSalesOrder.OrganizationId = SalesEmployee.OrganizationId;
                 await Calculator(CustomerSalesOrder);
+                List<Warehouse> Warehouses = await UOW.WarehouseRepository.List(new WarehouseFilter
+                {
+                    Skip = 0,
+                    Take = int.MaxValue,
+                    Selects = WarehouseSelect.Id,
+                    StatusId = new IdFilter { Equal = StatusEnum.ACTIVE.Id },
+                    OrganizationId = new IdFilter { Equal = SalesEmployee.OrganizationId }
+                });
+                var WarehouseId = Warehouses.Select(x => x.Id).FirstOrDefault();
+                foreach (var CustomerSalesOrderContent in oldData.CustomerSalesOrderContents)
+                {
+                    await MinusPending(WarehouseId, CustomerSalesOrderContent, false);
+                }
+
+                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                {
+                    await AddPending(WarehouseId, CustomerSalesOrderContent);
+
+                }
+
+                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                {
+                    if (CustomerSalesOrder.RequestStateId == RequestStateEnum.COMPLETED.Id)
+                        await MinusPending(WarehouseId, CustomerSalesOrderContent, true);
+                    else if (CustomerSalesOrder.RequestStateId == RequestStateEnum.REJECTED.Id)
+                        await MinusPending(WarehouseId, CustomerSalesOrderContent, false);
+                }
+
                 await UOW.CustomerSalesOrderRepository.Update(CustomerSalesOrder);
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
-                //await CalculatorInventory(CustomerSalesOrder);
+
                 await Logging.CreateAuditLog(CustomerSalesOrder, oldData, nameof(CustomerSalesOrderService));
                 return CustomerSalesOrder;
             }
@@ -190,6 +238,30 @@ namespace ELODIE.Services.MCustomerSalesOrder
                 await Logging.CreateSystemLog(ex, nameof(CustomerSalesOrderService));
             }
             return null;
+        }
+
+        private async Task<Inventory> MinusPending(long WarehouseId, CustomerSalesOrderContent CustomerSalesOrderContent, bool isMinusInventory)
+        {
+            var inventory = await UOW.InventoryRepository.GetByWarehouseAndItem(WarehouseId, CustomerSalesOrderContent.ItemId);
+            var qty = (CustomerSalesOrderContent.RequestedQuantity);
+            inventory.PendingQuantity -= qty;
+            if (isMinusInventory)
+            {
+                // xử lý trừ tồn cho trường hợp hoàn thành hoặc đang vận chuyển.
+                inventory.Quantity -= qty;
+
+            }
+            await UOW.InventoryRepository.Update(inventory);
+            return inventory;
+        }
+
+        private async Task<Inventory> AddPending(long WarehouseId, CustomerSalesOrderContent CustomerSalesOrderContent)
+        {
+            var inventory = await UOW.InventoryRepository.GetByWarehouseAndItem(WarehouseId, CustomerSalesOrderContent.ItemId);
+            var qty = (CustomerSalesOrderContent.RequestedQuantity);
+            inventory.PendingQuantity += qty;
+            await UOW.InventoryRepository.Update(inventory);
+            return inventory;
         }
 
         private async Task<CustomerSalesOrder> CalculatorInventory(CustomerSalesOrder CustomerSalesOrder)
@@ -245,6 +317,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
 
             return CustomerSalesOrder;
         }
+
         private async Task<CustomerSalesOrder> Calculator(CustomerSalesOrder CustomerSalesOrder)
         {
             var ProductIds = new List<long>();

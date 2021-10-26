@@ -12,6 +12,7 @@ namespace ELODIE.Models
         public decimal AlternateQuantity { get; set; }
         public long UnitOfMeasureId { get; set; }
         public long Quantity { get; set; }
+        public long PendingQuantity { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }

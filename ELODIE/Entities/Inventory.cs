@@ -15,6 +15,7 @@ namespace ELODIE.Entities
         public decimal AlternateQuantity { get; set; }
         public long UnitOfMeasureId { get; set; }
         public long Quantity { get; set; }
+        public long PendingQuantity { get; set; }
         public UnitOfMeasure AlternateUnitOfMeasure { get; set; }
         public Item Item { get; set; }
         public UnitOfMeasure UnitOfMeasure { get; set; }
@@ -33,6 +34,7 @@ namespace ELODIE.Entities
             if (this.AlternateQuantity != other.AlternateQuantity) return false;
             if (this.UnitOfMeasureId != other.UnitOfMeasureId) return false;
             if (this.Quantity != other.Quantity) return false;
+            if (this.PendingQuantity != other.PendingQuantity) return false;
             return true;
         }
         public override int GetHashCode()
@@ -50,6 +52,7 @@ namespace ELODIE.Entities
         public DecimalFilter AlternateQuantity { get; set; }
         public IdFilter UnitOfMeasureId { get; set; }
         public LongFilter Quantity { get; set; }
+        public LongFilter PendingQuantity { get; set; }
         public DateFilter CreatedAt { get; set; }
         public DateFilter UpdatedAt { get; set; }
         public List<InventoryFilter> OrFilter { get; set; }
@@ -67,6 +70,7 @@ namespace ELODIE.Entities
         AlternateQuantity = 4,
         UnitOfMeasure = 5,
         Quantity = 6,
+        PendingQuantity = 7,
         CreatedAt = 50,
         UpdatedAt = 51,
     }
@@ -82,5 +86,6 @@ namespace ELODIE.Entities
         AlternateQuantity = E._4,
         UnitOfMeasure = E._5,
         Quantity = E._6,
+        PendingQuantity = E._7,
     }
 }

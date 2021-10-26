@@ -48,6 +48,7 @@ namespace ELODIE.Repositories
             query = query.Where(q => q.AlternateQuantity, filter.AlternateQuantity);
             query = query.Where(q => q.UnitOfMeasureId, filter.UnitOfMeasureId);
             query = query.Where(q => q.Quantity, filter.Quantity);
+            query = query.Where(q => q.PendingQuantity, filter.PendingQuantity);
             
             return query;
         }
@@ -67,6 +68,7 @@ namespace ELODIE.Repositories
                 queryable = queryable.Where(q => q.AlternateQuantity, filter.AlternateQuantity);
                 queryable = queryable.Where(q => q.UnitOfMeasureId, filter.UnitOfMeasureId);
                 queryable = queryable.Where(q => q.Quantity, filter.Quantity);
+                queryable = queryable.Where(q => q.PendingQuantity, filter.PendingQuantity);
                 initQuery = initQuery.Union(queryable);
             }
             return initQuery;
@@ -100,6 +102,9 @@ namespace ELODIE.Repositories
                         case InventoryOrder.Quantity:
                             query = query.OrderBy(q => q.Quantity);
                             break;
+                        case InventoryOrder.PendingQuantity:
+                            query = query.OrderBy(q => q.PendingQuantity);
+                            break;
                     }
                     break;
                 case OrderType.DESC:
@@ -126,6 +131,9 @@ namespace ELODIE.Repositories
                         case InventoryOrder.Quantity:
                             query = query.OrderByDescending(q => q.Quantity);
                             break;
+                        case InventoryOrder.PendingQuantity:
+                            query = query.OrderByDescending(q => q.PendingQuantity);
+                            break;
                     }
                     break;
             }
@@ -144,6 +152,7 @@ namespace ELODIE.Repositories
                 AlternateQuantity = filter.Selects.Contains(InventorySelect.AlternateQuantity) ? q.AlternateQuantity : default(decimal),
                 UnitOfMeasureId = filter.Selects.Contains(InventorySelect.UnitOfMeasure) ? q.UnitOfMeasureId : default(long),
                 Quantity = filter.Selects.Contains(InventorySelect.Quantity) ? q.Quantity : default(long),
+                PendingQuantity = filter.Selects.Contains(InventorySelect.PendingQuantity) ? q.PendingQuantity : default(long),
                 AlternateUnitOfMeasure = filter.Selects.Contains(InventorySelect.AlternateUnitOfMeasure) && q.AlternateUnitOfMeasure != null ? new UnitOfMeasure
                 {
                     Id = q.AlternateUnitOfMeasure.Id,
@@ -241,6 +250,7 @@ namespace ELODIE.Repositories
                 AlternateQuantity = x.AlternateQuantity,
                 UnitOfMeasureId = x.UnitOfMeasureId,
                 Quantity = x.Quantity,
+                PendingQuantity = x.PendingQuantity,
                 AlternateUnitOfMeasure = x.AlternateUnitOfMeasure == null ? null : new UnitOfMeasure
                 {
                     Id = x.AlternateUnitOfMeasure.Id,
@@ -310,6 +320,7 @@ namespace ELODIE.Repositories
                 AlternateQuantity = x.AlternateQuantity,
                 UnitOfMeasureId = x.UnitOfMeasureId,
                 Quantity = x.Quantity,
+                PendingQuantity = x.PendingQuantity,
                 AlternateUnitOfMeasure = x.AlternateUnitOfMeasure == null ? null : new UnitOfMeasure
                 {
                     Id = x.AlternateUnitOfMeasure.Id,
@@ -382,6 +393,7 @@ namespace ELODIE.Repositories
                 AlternateQuantity = x.AlternateQuantity,
                 UnitOfMeasureId = x.UnitOfMeasureId,
                 Quantity = x.Quantity,
+                PendingQuantity = x.PendingQuantity,
                 AlternateUnitOfMeasure = x.AlternateUnitOfMeasure == null ? null : new UnitOfMeasure
                 {
                     Id = x.AlternateUnitOfMeasure.Id,
@@ -447,6 +459,7 @@ namespace ELODIE.Repositories
             InventoryDAO.AlternateQuantity = Inventory.AlternateQuantity;
             InventoryDAO.UnitOfMeasureId = Inventory.UnitOfMeasureId;
             InventoryDAO.Quantity = Inventory.Quantity;
+            InventoryDAO.PendingQuantity = Inventory.PendingQuantity;
             InventoryDAO.CreatedAt = StaticParams.DateTimeNow;
             InventoryDAO.UpdatedAt = StaticParams.DateTimeNow;
             DataContext.Inventory.Add(InventoryDAO);
@@ -468,6 +481,7 @@ namespace ELODIE.Repositories
             InventoryDAO.AlternateQuantity = Inventory.AlternateQuantity;
             InventoryDAO.UnitOfMeasureId = Inventory.UnitOfMeasureId;
             InventoryDAO.Quantity = Inventory.Quantity;
+            InventoryDAO.PendingQuantity = Inventory.PendingQuantity;
             InventoryDAO.UpdatedAt = StaticParams.DateTimeNow;
             await DataContext.SaveChangesAsync();
             await SaveReference(Inventory);
@@ -493,6 +507,7 @@ namespace ELODIE.Repositories
                 InventoryDAO.AlternateQuantity = Inventory.AlternateQuantity;
                 InventoryDAO.UnitOfMeasureId = Inventory.UnitOfMeasureId;
                 InventoryDAO.Quantity = Inventory.Quantity;
+                InventoryDAO.PendingQuantity = Inventory.PendingQuantity;
                 InventoryDAO.CreatedAt = StaticParams.DateTimeNow;
                 InventoryDAO.UpdatedAt = StaticParams.DateTimeNow;
                 InventoryDAOs.Add(InventoryDAO);
