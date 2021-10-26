@@ -171,9 +171,7 @@ namespace ELODIE.Models
             {
                 entity.ToTable("AppUser", "MDM");
 
-                entity.Property(e => e.Id)
-                    .HasComment("Id")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Id).HasComment("Id");
 
                 entity.Property(e => e.Address)
                     .HasMaxLength(500)
