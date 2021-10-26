@@ -365,6 +365,17 @@ namespace ELODIE.Services.MCustomerSalesOrder
             }
             return CustomerSalesOrder.IsValidated;
         }
+
+        public async Task<bool> HasOutOfStock(long WarehouseId, CustomerSalesOrder CustomerSalesOrder)
+        {
+            foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+            {
+                
+            }
+
+            return false;
+            //return (inventory.Quantity - inventory.PendingQuantity - CustomerSalesOrderContent.RequestedQuantity) > 0;
+        }
         public async Task<bool> Create(CustomerSalesOrder CustomerSalesOrder)
         {
             await ValidateCustomer(CustomerSalesOrder);

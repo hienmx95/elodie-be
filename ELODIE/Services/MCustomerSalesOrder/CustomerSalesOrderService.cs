@@ -99,7 +99,7 @@ namespace ELODIE.Services.MCustomerSalesOrder
                         Take = int.MaxValue,
                         ItemId = new IdFilter { In = Ids },
                         WarehouseId = new IdFilter { In = WarehouseIds },
-                        Selects = InventorySelect.Quantity | InventorySelect.Item
+                        Selects = InventorySelect.Quantity | InventorySelect.Item | InventorySelect.PendingQuantity
                     };
 
                     var inventories = await UOW.InventoryRepository.List(InventoryFilter);
@@ -169,10 +169,21 @@ namespace ELODIE.Services.MCustomerSalesOrder
                     OrganizationId = new IdFilter { Equal = SalesEmployee.OrganizationId }
                 });
                 var WarehouseId = Warehouses.Select(x => x.Id).FirstOrDefault();
-                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                if (CustomerSalesOrder.CustomerSalesOrderContents != null)
                 {
-                    await AddPending(WarehouseId, CustomerSalesOrderContent);
+                    foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                    {
+                        await AddPending(WarehouseId, CustomerSalesOrderContent.RequestedQuantity, CustomerSalesOrderContent.ItemId);
+                    }
                 }
+                if (CustomerSalesOrder.CustomerSalesOrderPromotions != null)
+                {
+                    foreach (var CustomerSalesOrderPromotion in CustomerSalesOrder.CustomerSalesOrderPromotions)
+                    {
+                        await AddPending(WarehouseId, CustomerSalesOrderPromotion.RequestedQuantity, CustomerSalesOrderPromotion.ItemId);
+                    }
+                }
+               
 
                 await UOW.CustomerSalesOrderRepository.Create(CustomerSalesOrder);
                 CustomerSalesOrder = await UOW.CustomerSalesOrderRepository.Get(CustomerSalesOrder.Id);
@@ -207,24 +218,63 @@ namespace ELODIE.Services.MCustomerSalesOrder
                     StatusId = new IdFilter { Equal = StatusEnum.ACTIVE.Id },
                     OrganizationId = new IdFilter { Equal = SalesEmployee.OrganizationId }
                 });
+
                 var WarehouseId = Warehouses.Select(x => x.Id).FirstOrDefault();
-                foreach (var CustomerSalesOrderContent in oldData.CustomerSalesOrderContents)
+
+                if (oldData.CustomerSalesOrderContents != null)
                 {
-                    await MinusPending(WarehouseId, CustomerSalesOrderContent, false);
+                    foreach (var CustomerSalesOrderContent in oldData.CustomerSalesOrderContents)
+                    {
+                        await MinusPending(WarehouseId, CustomerSalesOrderContent.RequestedQuantity, CustomerSalesOrderContent.ItemId, false);
+                    }
                 }
 
-                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                if (oldData.CustomerSalesOrderPromotions != null)
                 {
-                    await AddPending(WarehouseId, CustomerSalesOrderContent);
-
+                    foreach (var CustomerSalesOrderPromotion in oldData.CustomerSalesOrderPromotions)
+                    {
+                        await MinusPending(WarehouseId, CustomerSalesOrderPromotion.RequestedQuantity, CustomerSalesOrderPromotion.ItemId, false);
+                    }
                 }
 
-                foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                if (CustomerSalesOrder.CustomerSalesOrderContents != null)
                 {
-                    if (CustomerSalesOrder.RequestStateId == RequestStateEnum.COMPLETED.Id)
-                        await MinusPending(WarehouseId, CustomerSalesOrderContent, true);
-                    else if (CustomerSalesOrder.RequestStateId == RequestStateEnum.REJECTED.Id)
-                        await MinusPending(WarehouseId, CustomerSalesOrderContent, false);
+                    foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                    {
+                        await AddPending(WarehouseId, CustomerSalesOrderContent.RequestedQuantity, CustomerSalesOrderContent.ItemId);
+
+                    }
+                }
+
+                if (CustomerSalesOrder.CustomerSalesOrderPromotions != null)
+                {
+                    foreach (var CustomerSalesOrderPromotions in CustomerSalesOrder.CustomerSalesOrderPromotions)
+                    {
+                        await AddPending(WarehouseId, CustomerSalesOrderPromotions.RequestedQuantity, CustomerSalesOrderPromotions.ItemId);
+
+                    }
+                }
+
+                if (CustomerSalesOrder.CustomerSalesOrderContents != null)
+                {
+                    foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
+                    {
+                        if (CustomerSalesOrder.RequestStateId == RequestStateEnum.COMPLETED.Id)
+                            await MinusPending(WarehouseId, CustomerSalesOrderContent.RequestedQuantity, CustomerSalesOrderContent.ItemId, true);
+                        else if (CustomerSalesOrder.RequestStateId == RequestStateEnum.REJECTED.Id)
+                            await MinusPending(WarehouseId, CustomerSalesOrderContent.RequestedQuantity, CustomerSalesOrderContent.ItemId, false);
+                    }
+                }
+
+                if (CustomerSalesOrder.CustomerSalesOrderPromotions != null)
+                {
+                    foreach (var CustomerSalesOrderPromotion in CustomerSalesOrder.CustomerSalesOrderPromotions)
+                    {
+                        if (CustomerSalesOrder.RequestStateId == RequestStateEnum.COMPLETED.Id)
+                            await MinusPending(WarehouseId, CustomerSalesOrderPromotion.RequestedQuantity, CustomerSalesOrderPromotion.ItemId, true);
+                        else if (CustomerSalesOrder.RequestStateId == RequestStateEnum.REJECTED.Id)
+                            await MinusPending(WarehouseId, CustomerSalesOrderPromotion.RequestedQuantity, CustomerSalesOrderPromotion.ItemId, false);
+                    }
                 }
 
                 await UOW.CustomerSalesOrderRepository.Update(CustomerSalesOrder);
@@ -240,82 +290,27 @@ namespace ELODIE.Services.MCustomerSalesOrder
             return null;
         }
 
-        private async Task<Inventory> MinusPending(long WarehouseId, CustomerSalesOrderContent CustomerSalesOrderContent, bool isMinusInventory)
+        private async Task<Inventory> MinusPending(long WarehouseId, long RequestedQuantity, long ItemId, bool isMinusInventory)
         {
-            var inventory = await UOW.InventoryRepository.GetByWarehouseAndItem(WarehouseId, CustomerSalesOrderContent.ItemId);
-            var qty = (CustomerSalesOrderContent.RequestedQuantity);
-            inventory.PendingQuantity -= qty;
+
+            var inventory = await UOW.InventoryRepository.GetByWarehouseAndItem(WarehouseId, ItemId);
+            inventory.PendingQuantity -= RequestedQuantity;
             if (isMinusInventory)
             {
                 // xử lý trừ tồn cho trường hợp hoàn thành hoặc đang vận chuyển.
-                inventory.Quantity -= qty;
+                inventory.Quantity -= RequestedQuantity;
 
             }
             await UOW.InventoryRepository.Update(inventory);
             return inventory;
         }
 
-        private async Task<Inventory> AddPending(long WarehouseId, CustomerSalesOrderContent CustomerSalesOrderContent)
+        private async Task<Inventory> AddPending(long WarehouseId, long RequestedQuantity, long ItemId)
         {
-            var inventory = await UOW.InventoryRepository.GetByWarehouseAndItem(WarehouseId, CustomerSalesOrderContent.ItemId);
-            var qty = (CustomerSalesOrderContent.RequestedQuantity);
-            inventory.PendingQuantity += qty;
+            var inventory = await UOW.InventoryRepository.GetByWarehouseAndItem(WarehouseId, ItemId);
+            inventory.PendingQuantity += RequestedQuantity;
             await UOW.InventoryRepository.Update(inventory);
             return inventory;
-        }
-
-        private async Task<CustomerSalesOrder> CalculatorInventory(CustomerSalesOrder CustomerSalesOrder)
-        {
-            var SalesEmployee = await UOW.AppUserRepository.Get(CustomerSalesOrder.SalesEmployeeId);
-            var ItemIds = new List<long>();
-            if (CustomerSalesOrder.CustomerSalesOrderContents != null)
-            {
-                ItemIds.AddRange(CustomerSalesOrder.CustomerSalesOrderContents.Select(x => x.ItemId).ToList());
-            }
-            ItemIds = ItemIds.Distinct().ToList();
-            ItemFilter ItemFilter = new ItemFilter
-            {
-                Skip = 0,
-                Take = ItemIds.Count,
-                Id = new IdFilter { In = ItemIds },
-                Selects = ItemSelect.ALL,
-            };
-            var Items = await UOW.ItemRepository.List(ItemFilter);
-
-            var Ids = Items.Select(x => x.Id).ToList();
-
-            if (SalesEmployee != null)
-            {
-                List<Warehouse> Warehouses = await UOW.WarehouseRepository.List(new WarehouseFilter
-                {
-                    Skip = 0,
-                    Take = int.MaxValue,
-                    Selects = WarehouseSelect.Id,
-                    StatusId = new IdFilter { Equal = StatusEnum.ACTIVE.Id },
-                    OrganizationId = new IdFilter { Equal = SalesEmployee.OrganizationId }
-                });
-                var WarehouseId = Warehouses.Select(x => x.Id).FirstOrDefault();
-                InventoryFilter InventoryFilter = new InventoryFilter
-                {
-                    Skip = 0,
-                    Take = int.MaxValue,
-                    ItemId = new IdFilter { In = Ids },
-                    WarehouseId = new IdFilter { Equal = WarehouseId },
-                    Selects = InventorySelect.Quantity | InventorySelect.Item
-                };
-
-                var inventories = await UOW.InventoryRepository.List(InventoryFilter);
-
-                foreach (var inventory in inventories)
-                {
-                    inventory.Quantity = CustomerSalesOrder.CustomerSalesOrderContents.Where(i => i.ItemId == inventory.ItemId).Select(i => i.RequestedQuantity).FirstOrDefault();
-                }
-
-                await UOW.InventoryRepository.BulkMerge(inventories);
-
-            }
-
-            return CustomerSalesOrder;
         }
 
         private async Task<CustomerSalesOrder> Calculator(CustomerSalesOrder CustomerSalesOrder)
