@@ -15,6 +15,9 @@ namespace ELODIE.Rpc.organization
         public const string Count = Default + "/count";
         public const string List = Default + "/list";
         public const string Get = Default + "/get";
+        public const string Create = Default + "/create";
+        public const string Update = Default + "/update";
+        public const string Delete = Default + "/delete";
         public const string UpdateIsDisplay = Default + "/update-is-display";
         public const string Export = Default + "/export";
         public const string ExportAppUser = Default + "/export-app-user";
@@ -52,9 +55,17 @@ namespace ELODIE.Rpc.organization
                 Parent,
                 Master, Count, List, Get,
                 FilterListOrganization, FilterListStatus, FilterListAppUser, } },
-            { "Sửa", new List<string> {
-                Parent,
+            { "Thêm", new List<string> {
+                Parent, Create,
                 Master, Count, List, Get, UpdateIsDisplay,
+                FilterListOrganization, FilterListStatus, FilterListAppUser, }.Concat(SingleList).Concat(ListCount) },
+            { "Sửa", new List<string> {
+                Parent, Update,
+                Master, Count, List, Get, UpdateIsDisplay,
+                FilterListOrganization, FilterListStatus, FilterListAppUser, }.Concat(SingleList).Concat(ListCount) },
+            { "Xóa", new List<string> {
+                Parent, Delete,
+                Master, Count, List, Get,
                 FilterListOrganization, FilterListStatus, FilterListAppUser, }.Concat(SingleList).Concat(ListCount) },
             { "Xuất excel", new List<string> {
                 Parent,

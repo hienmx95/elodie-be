@@ -18,6 +18,9 @@ namespace ELODIE.Repositories
         Task<List<Organization>> List(OrganizationFilter OrganizationFilter);
         Task<List<Organization>> List(List<long> Ids);
         Task<Organization> Get(long Id);
+        Task<bool> Create(Organization Organization);
+        Task<bool> Update(Organization Organization);
+        Task<bool> Delete(Organization Organization);
         Task<bool> BulkMerge(List<Organization> Organizations);
         Task<bool> UpdateIsDisplay(Organization Organization);
     }
@@ -501,6 +504,116 @@ namespace ELODIE.Repositories
                 }).ToListAsync();
 
             return Organization;
+        }
+
+        public async Task<bool> Create(Organization Organization)
+        {
+            OrganizationDAO OrganizationDAO = new OrganizationDAO();
+            OrganizationDAO.Id = Organization.Id;
+            OrganizationDAO.Code = Organization.Code;
+            OrganizationDAO.Name = Organization.Name;
+            OrganizationDAO.ParentId = Organization.ParentId;
+            OrganizationDAO.Path = Organization.Path;
+            OrganizationDAO.Level = Organization.Level;
+            OrganizationDAO.StatusId = Organization.StatusId;
+            OrganizationDAO.Phone = Organization.Phone;
+            OrganizationDAO.Email = Organization.Email;
+            OrganizationDAO.Address = Organization.Address;
+            OrganizationDAO.RowId = Organization.RowId;
+            OrganizationDAO.Used = Organization.Used;
+            OrganizationDAO.IsDisplay = Organization.IsDisplay;
+            OrganizationDAO.RowId = Guid.NewGuid();
+            OrganizationDAO.Path = "";
+            OrganizationDAO.Level = 1;
+            OrganizationDAO.CreatedAt = StaticParams.DateTimeNow;
+            OrganizationDAO.UpdatedAt = StaticParams.DateTimeNow;
+            DataContext.Organization.Add(OrganizationDAO);
+            await DataContext.SaveChangesAsync();
+            Organization.Id = OrganizationDAO.Id;
+            await SaveReference(Organization);
+            await BuildPath();
+            return true;
+        }
+
+        public async Task<bool> Update(Organization Organization)
+        {
+            OrganizationDAO OrganizationDAO = DataContext.Organization.Where(x => x.Id == Organization.Id).FirstOrDefault();
+            if (OrganizationDAO == null)
+                return false;
+            OrganizationDAO.Id = Organization.Id;
+            OrganizationDAO.Code = Organization.Code;
+            OrganizationDAO.Name = Organization.Name;
+            OrganizationDAO.ParentId = Organization.ParentId;
+            OrganizationDAO.Path = Organization.Path;
+            OrganizationDAO.Level = Organization.Level;
+            OrganizationDAO.StatusId = Organization.StatusId;
+            OrganizationDAO.Phone = Organization.Phone;
+            OrganizationDAO.Email = Organization.Email;
+            OrganizationDAO.Address = Organization.Address;
+            OrganizationDAO.RowId = Organization.RowId;
+            OrganizationDAO.Used = Organization.Used;
+            OrganizationDAO.IsDisplay = Organization.IsDisplay;
+            OrganizationDAO.Path = "";
+            OrganizationDAO.Level = 1;
+            OrganizationDAO.UpdatedAt = StaticParams.DateTimeNow;
+            await DataContext.SaveChangesAsync();
+            await SaveReference(Organization);
+            await BuildPath();
+            return true;
+        }
+
+        public async Task<bool> Delete(Organization Organization)
+        {
+            OrganizationDAO OrganizationDAO = await DataContext.Organization.Where(x => x.Id == Organization.Id).FirstOrDefaultAsync();
+            await DataContext.Organization.Where(x => x.Path.StartsWith(OrganizationDAO.Id + ".")).UpdateFromQueryAsync(x => new OrganizationDAO { DeletedAt = StaticParams.DateTimeNow, UpdatedAt = StaticParams.DateTimeNow });
+            await DataContext.Organization.Where(x => x.Id == Organization.Id).UpdateFromQueryAsync(x => new OrganizationDAO { DeletedAt = StaticParams.DateTimeNow, UpdatedAt = StaticParams.DateTimeNow });
+            await BuildPath();
+            return true;
+        }
+
+        public async Task<bool> BulkDelete(List<Organization> Organizations)
+        {
+            List<long> Ids = Organizations.Select(x => x.Id).ToList();
+            await DataContext.Organization
+                .Where(x => Ids.Contains(x.Id))
+                .UpdateFromQueryAsync(x => new OrganizationDAO { DeletedAt = StaticParams.DateTimeNow, UpdatedAt = StaticParams.DateTimeNow });
+            await BuildPath();
+            return true;
+        }
+
+        private async Task SaveReference(Organization Organization)
+        {
+        }
+
+        private async Task BuildPath()
+        {
+            List<OrganizationDAO> OrganizationDAOs = await DataContext.Organization
+                .Where(x => x.DeletedAt == null)
+                .AsNoTracking().ToListAsync();
+            Queue<OrganizationDAO> queue = new Queue<OrganizationDAO>();
+            OrganizationDAOs.ForEach(x =>
+            {
+                if (!x.ParentId.HasValue)
+                {
+                    x.Path = x.Id + ".";
+                    x.Level = 1;
+                    queue.Enqueue(x);
+                }
+            });
+            while (queue.Count > 0)
+            {
+                OrganizationDAO Parent = queue.Dequeue();
+                foreach (OrganizationDAO OrganizationDAO in OrganizationDAOs)
+                {
+                    if (OrganizationDAO.ParentId == Parent.Id)
+                    {
+                        OrganizationDAO.Path = Parent.Path + OrganizationDAO.Id + ".";
+                        OrganizationDAO.Level = Parent.Level + 1;
+                        queue.Enqueue(OrganizationDAO);
+                    }
+                }
+            }
+            await DataContext.BulkMergeAsync(OrganizationDAOs);
         }
 
         public async Task<bool> UpdateIsDisplay(Organization Organization)

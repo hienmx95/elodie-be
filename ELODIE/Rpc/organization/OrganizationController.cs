@@ -72,6 +72,60 @@ namespace ELODIE.Rpc.organization
             return new Organization_OrganizationDTO(Organization);
         }
 
+        [Route(OrganizationRoute.Create), HttpPost]
+        public async Task<ActionResult<Organization_OrganizationDTO>> Create([FromBody] Organization_OrganizationDTO Organization_OrganizationDTO)
+        {
+            if (!ModelState.IsValid)
+                throw new BindException(ModelState);
+
+            if (!await HasPermission(Organization_OrganizationDTO.Id))
+                return Forbid();
+
+            Organization Organization = ConvertDTOToEntity(Organization_OrganizationDTO);
+            Organization = await OrganizationService.Create(Organization);
+            Organization_OrganizationDTO = new Organization_OrganizationDTO(Organization);
+            if (Organization.IsValidated)
+                return Organization_OrganizationDTO;
+            else
+                return BadRequest(Organization_OrganizationDTO);
+        }
+
+        [Route(OrganizationRoute.Update), HttpPost]
+        public async Task<ActionResult<Organization_OrganizationDTO>> Update([FromBody] Organization_OrganizationDTO Organization_OrganizationDTO)
+        {
+            if (!ModelState.IsValid)
+                throw new BindException(ModelState);
+
+            if (!await HasPermission(Organization_OrganizationDTO.Id))
+                return Forbid();
+
+            Organization Organization = ConvertDTOToEntity(Organization_OrganizationDTO);
+            Organization = await OrganizationService.Update(Organization);
+            Organization_OrganizationDTO = new Organization_OrganizationDTO(Organization);
+            if (Organization.IsValidated)
+                return Organization_OrganizationDTO;
+            else
+                return BadRequest(Organization_OrganizationDTO);
+        }
+
+        [Route(OrganizationRoute.Delete), HttpPost]
+        public async Task<ActionResult<Organization_OrganizationDTO>> Delete([FromBody] Organization_OrganizationDTO Organization_OrganizationDTO)
+        {
+            if (!ModelState.IsValid)
+                throw new BindException(ModelState);
+
+            if (!await HasPermission(Organization_OrganizationDTO.Id))
+                return Forbid();
+
+            Organization Organization = ConvertDTOToEntity(Organization_OrganizationDTO);
+            Organization = await OrganizationService.Delete(Organization);
+            Organization_OrganizationDTO = new Organization_OrganizationDTO(Organization);
+            if (Organization.IsValidated)
+                return Organization_OrganizationDTO;
+            else
+                return BadRequest(Organization_OrganizationDTO);
+        }
+
         [Route(OrganizationRoute.UpdateIsDisplay), HttpPost]
         public async Task<ActionResult<Organization_OrganizationDTO>> UpdateIsDisplay([FromBody] Organization_OrganizationDTO Organization_OrganizationDTO)
         {

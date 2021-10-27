@@ -1387,8 +1387,6 @@ namespace ELODIE.Models
             {
                 entity.ToTable("Organization", "MDM");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Address).HasMaxLength(500);
 
                 entity.Property(e => e.Code)

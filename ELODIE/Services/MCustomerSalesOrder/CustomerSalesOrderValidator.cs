@@ -366,13 +366,50 @@ namespace ELODIE.Services.MCustomerSalesOrder
             return CustomerSalesOrder.IsValidated;
         }
 
-        public async Task<bool> HasOutOfStock(long WarehouseId, CustomerSalesOrder CustomerSalesOrder)
+        public async Task<bool> HasOutOfStock(CustomerSalesOrder CustomerSalesOrder)
         {
+            long WarehouseId = 3;
+            List<Item> Items = new List<Item>();
+
             foreach (var CustomerSalesOrderContent in CustomerSalesOrder.CustomerSalesOrderContents)
             {
-                
+                Item Item = new Item
+                {
+                    Id = CustomerSalesOrderContent.ItemId,
+                    SaleStock = CustomerSalesOrderContent.RequestedQuantity,
+                    HasInventory = false
+                };
+                Items.Add(Item);
             }
+            foreach (var CustomerSalesOrderPromotion in CustomerSalesOrder.CustomerSalesOrderPromotions)
+            {
+                Item Item = new Item
+                {
+                    Id = CustomerSalesOrderPromotion.ItemId,
+                    SaleStock = CustomerSalesOrderPromotion.RequestedQuantity
+                };
+                Items.Add(Item);
+            }
+            
+            var ItemDistincts = Items.GroupBy(x => x.Id).Select(x => new { Id = x.Key, Quantity = x.Sum(s => s.SaleStock) }).ToList();
 
+            var Ids = ItemDistincts.Select(x => x.Id).ToList();
+
+            InventoryFilter InventoryFilter = new InventoryFilter
+            {
+                Skip = 0,
+                Take = int.MaxValue,
+                ItemId = new IdFilter { In = Ids },
+                WarehouseId = new IdFilter { Equal = WarehouseId },
+                Selects = InventorySelect.Quantity | InventorySelect.Item | InventorySelect.PendingQuantity
+            };
+            var inventories = await UOW.InventoryRepository.List(InventoryFilter);
+            var list = inventories.GroupBy(x => x.ItemId).Select(x => new { ItemId = x.Key, SaleStock = x.Sum(s => s.Quantity) - x.Sum(s => s.PendingQuantity) }).ToList();
+            foreach (var item in ItemDistincts)
+            {
+                var stock = list.Where(i => i.ItemId == item.Id).Select(i => i.SaleStock).FirstOrDefault();
+                var HasInventory = item.Quantity <= stock;
+            }
             return false;
             //return (inventory.Quantity - inventory.PendingQuantity - CustomerSalesOrderContent.RequestedQuantity) > 0;
         }
