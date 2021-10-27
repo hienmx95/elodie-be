@@ -10,7 +10,7 @@ namespace ELODIE.Rpc.organization
     {
         public const string Parent = Module + "/organization";
         public const string Master = Module + "/organization/organization-master";
-        public const string Detail = Module + "/organization/organization-detail/*";
+        public const string Detail = Module + "/organization/organization-detail";
         private const string Default = Rpc + Module + "/organization";
         public const string Count = Default + "/count";
         public const string List = Default + "/list";
