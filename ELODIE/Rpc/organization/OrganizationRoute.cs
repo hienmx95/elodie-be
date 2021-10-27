@@ -52,23 +52,23 @@ namespace ELODIE.Rpc.organization
         public static Dictionary<string, IEnumerable<string>> Action = new Dictionary<string, IEnumerable<string>>
         {
             { "Tìm kiếm", new List<string> {
-                Parent,
+                Parent, Detail,
                 Master, Count, List, Get,
                 FilterListOrganization, FilterListStatus, FilterListAppUser, } },
             { "Thêm", new List<string> {
-                Parent, Create,
+                Parent, Create, Detail,
                 Master, Count, List, Get, UpdateIsDisplay,
                 FilterListOrganization, FilterListStatus, FilterListAppUser, }.Concat(SingleList).Concat(ListCount) },
             { "Sửa", new List<string> {
-                Parent, Update,
+                Parent, Update, Detail,
                 Master, Count, List, Get, UpdateIsDisplay,
                 FilterListOrganization, FilterListStatus, FilterListAppUser, }.Concat(SingleList).Concat(ListCount) },
             { "Xóa", new List<string> {
-                Parent, Delete,
+                Parent, Delete, Detail,
                 Master, Count, List, Get,
                 FilterListOrganization, FilterListStatus, FilterListAppUser, }.Concat(SingleList).Concat(ListCount) },
             { "Xuất excel", new List<string> {
-                Parent,
+                Parent, Detail,
                 Master, Count, List, Get,
                 FilterListOrganization, FilterListStatus, FilterListAppUser, Export, ExportAppUser } },
         };
