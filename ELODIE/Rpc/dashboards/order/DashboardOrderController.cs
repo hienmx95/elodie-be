@@ -242,6 +242,17 @@ namespace ELODIE.Rpc.dashboards.order
             return await queryOrder.Select(x => x.Id).Distinct().CountAsync();
         }
 
+        [Route(DashboardOrderRoute.InstagramGad8Counter), HttpPost]
+        public async Task<long> InstagramGad8Counter([FromBody] DashboardOrder_RevenueByTimeFilterDTO DashboardOrder_RevenueFluctuationFilterDTO)
+        {
+           
+            var queryOrder = from o in DataContext.InstagramSupplier
+                             where o.Code.Equals("gad8")
+                             select o;
+
+            return await queryOrder.Select(x => x.CountView).FirstOrDefaultAsync();
+        }
+
         [Route(DashboardOrderRoute.CompletedOrderCounter), HttpPost]
         public async Task<long> CompletedOrderCounter([FromBody] DashboardOrder_RevenueByTimeFilterDTO DashboardOrder_RevenueFluctuationFilterDTO)
         {

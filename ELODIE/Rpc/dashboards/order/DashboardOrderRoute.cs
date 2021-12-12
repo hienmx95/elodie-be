@@ -15,6 +15,7 @@ namespace ELODIE.Rpc.dashboards.order
         private const string Default = Rpc + Module + "/dashboards/order";
         public const string TotalRevenue = Default + "/total-revenue";
         public const string OrderCounter = Default + "/order-counter";
+        public const string InstagramGad8Counter = Default + "/instagram-gad8-counter";
         public const string CompletedOrderCounter = Default + "/completed-order-counter";
         public const string ProcessingOrderCounter = Default + "/processing-order-counter";
         public const string RejectedOrderCounter = Default + "/rejected-order-counter";

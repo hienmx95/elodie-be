@@ -37,6 +37,7 @@ namespace ELODIE.Models
         public virtual DbSet<HashDAO> Hash { get; set; }
         public virtual DbSet<IdGeneratorDAO> IdGenerator { get; set; }
         public virtual DbSet<ImageDAO> Image { get; set; }
+        public virtual DbSet<InstagramSupplierDAO> InstagramSupplier { get; set; }
         public virtual DbSet<InventoryDAO> Inventory { get; set; }
         public virtual DbSet<ItemDAO> Item { get; set; }
         public virtual DbSet<ItemHistoryDAO> ItemHistory { get; set; }
@@ -1098,6 +1099,19 @@ namespace ELODIE.Models
                     .IsRequired()
                     .HasMaxLength(4000)
                     .HasComment("Đường dẫn Url");
+            });
+
+            modelBuilder.Entity<InstagramSupplierDAO>(entity =>
+            {
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<InventoryDAO>(entity =>
