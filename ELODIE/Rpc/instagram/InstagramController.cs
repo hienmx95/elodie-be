@@ -45,14 +45,23 @@ namespace ELODIE.Rpc
             string supplier = HttpContext.Request.Query["supplier"].ToString();
             if (!string.IsNullOrEmpty(supplier))
             {
-                InstagramSupplierDAO InstagramSupplierDAO = DataContext.InstagramSupplier
-               .Where(r => r.Name.Equals(supplier))
-               .FirstOrDefault();
-                if (InstagramSupplierDAO != null)
+                // InstagramSupplierDAO InstagramSupplierDAO = DataContext.InstagramSupplier
+                //.Where(r => r.Name.Equals(supplier))
+                //.FirstOrDefault();
+                // if (InstagramSupplierDAO != null)
+                // {
+                //     InstagramSupplierDAO.CountView++;
+                //     DataContext.SaveChanges();
+                // }
+                InstagramSupplierDAO InstagramSupplierDAO = new InstagramSupplierDAO
                 {
-                    InstagramSupplierDAO.CountView++;
-                    DataContext.SaveChanges();
-                }
+                    Code = supplier,
+                    Name = supplier.ToUpper(),
+                    UpdatedAt = StaticParams.DateTimeNow,
+                    CountView = 1
+                };
+                DataContext.InstagramSupplier.Add(InstagramSupplierDAO);
+                DataContext.SaveChanges();
                 return Redirect("https://www.instagram.com/elodie.chandelle/");
             }
             return Redirect("https://www.instagram.com/elodie.chandelle/");
