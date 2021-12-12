@@ -39,7 +39,7 @@ namespace ELODIE.Rpc
             this.UOW = UOW;
         }
 
-        [HttpGet, Route("instagram/tracking")]
+        [HttpGet, Route("rpc/elodie/instagram/tracking")]
         public RedirectResult Tracking()
         {
             string supplier = HttpContext.Request.Query["supplier"].ToString();
