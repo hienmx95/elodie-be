@@ -15,7 +15,7 @@ namespace ELODIE.Rpc.dashboards.order
         private const string Default = Rpc + Module + "/dashboards/order";
         public const string TotalRevenue = Default + "/total-revenue";
         public const string OrderCounter = Default + "/order-counter";
-        public const string InstagramGad8Counter = Default + "/instagram-gad8-counter";
+        public const string InstagramGad8Counter = Default + "/instagram-gad-8-counter";
         public const string CompletedOrderCounter = Default + "/completed-order-counter";
         public const string ProcessingOrderCounter = Default + "/processing-order-counter";
         public const string RejectedOrderCounter = Default + "/rejected-order-counter";
@@ -43,7 +43,7 @@ namespace ELODIE.Rpc.dashboards.order
             { "Hiển thị", new List<string> {
                 Parent, CompletedOrderCounter, ProcessingOrderCounter,
                 Master, TotalRevenue, OrderCounter, RejectedOrderCounter, RevenueBySource, RevenueByTime, RevenueByStatus,
-                FilterListTime, FilterListAppUser, FilterListOrganization, FilterListProvince, ListOrderItem, CountItem
+                FilterListTime, FilterListAppUser, FilterListOrganization, FilterListProvince, ListOrderItem, CountItem, InstagramGad8Counter,
             } },
         };
     }
